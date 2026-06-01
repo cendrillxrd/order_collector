@@ -2,13 +2,14 @@ import pandas as pd
 
 from base.config import BASE_FILE_NAME
 from base.dto.columns_main_dto import ColumnsBaseDTO
-from config import MAIN_DIR
-
+from config import MAIN_DIR, REMOTE_PATH, LOCAL_PATH
+from yandex_disk import download_file
 
 class InfoCollector:
     def __init__(self):
         self.columns = ColumnsBaseDTO()
     def collect_info(self):
+        download_file(REMOTE_PATH, LOCAL_PATH)
         df = pd.read_excel(f'{MAIN_DIR}/{BASE_FILE_NAME}.xlsx')
 
         # Словарь с названиями сайтов и соответствующими фильтрами
