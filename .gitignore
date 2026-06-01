@@ -1,0 +1,27 @@
+# Виртуальное окружение
+.venv/
+
+# Файлы окружения и ключи
+.env
+*.env
+
+# Кэш Python
+__pycache__/
+*.py[cod]
+
+# IDE
+.idea/
+.vscode/
+
+# Логи и временные файлы
+*.log
+*.tmp
+
+# Сборка
+dist/
+build/
+*.spec
+
+#эксель
+*.csv
+*.xlsx
