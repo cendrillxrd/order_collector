@@ -1,16 +1,16 @@
 import pandas as pd
 
-from base.config import BASE_FILE_NAME
 from base.dto.columns_main_dto import ColumnsBaseDTO
-from config import MAIN_DIR, REMOTE_PATH, LOCAL_PATH
+from base.config import YANDEX_DISC_BASE_FILE_NAME, LOCAL_PATH
+from config import MAIN_DIR, REMOTE_PATH
 from yandex_disk import download_file
 
 class InfoCollector:
     def __init__(self):
         self.columns = ColumnsBaseDTO()
     def collect_info(self):
-        download_file(REMOTE_PATH, LOCAL_PATH)
-        df = pd.read_excel(f'{MAIN_DIR}/{BASE_FILE_NAME}.xlsx')
+        download_file(REMOTE_PATH + YANDEX_DISC_BASE_FILE_NAME, LOCAL_PATH)
+        df = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_BASE_FILE_NAME}')
 
         # Словарь с названиями сайтов и соответствующими фильтрами
         site_filters = {
@@ -18,7 +18,8 @@ class InfoCollector:
             'Проект MARC CONY': 'Сайт MC',
             'Проект VAN MICH': 'Сайт VAN MICH',
             'МЁД': 'Сайт Мёд',
-            'Приложение': 'Приложение'
+            'Приложение': 'Приложение',
+            'Проект VipAvenue': 'VipAvenue'
         }
 
         # Создание словаря с DataFrames

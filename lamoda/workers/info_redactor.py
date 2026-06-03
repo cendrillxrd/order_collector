@@ -3,12 +3,13 @@ from typing import Literal
 import pandas as pd
 from pandas import DataFrame
 
-from config import MAIN_DIR
-from lamoda.config import (NOMENCLATURE_DAY_FILE_NAME, NOMENCLATURE_FILE_NAME,
-                           ORDERS_FILE_NAME, BASE_ORDERS_FILE_NAME, BASE_ORDERS_FILE_NAME_SMART_PREMIUM)
+from config import MAIN_DIR, REMOTE_PATH
+from lamoda.config import (YANDEX_DISC_LAMODA_FILE_NAME, LOCAL_LAMODA_PATH, YANDEX_DISC_LAMODA_SP_FILE_NAME,
+                           LOCAL_LAMODA_SP_PATH)
 from lamoda.dto.columns_main_dto import ColumnsMainDTO
 from lamoda.dto.info_dto import InfoDTO
 from lamoda.service.redaction import RedactionService
+from yandex_disk import download_file, upload_file
 
 
 class InfoRedactor:
@@ -22,9 +23,11 @@ class InfoRedactor:
             orders_with_brand = self.red.merge_orders_with_brand(info.orders_month, info.nomenclature)
             orders_all_info = self.red.merge_orders_info(info.all_orders, orders_with_brand)
             if self.market_type == 'ufo':
-                orders_all_info.to_excel(f'{MAIN_DIR}/{BASE_ORDERS_FILE_NAME}.xlsx', index=False)
+                orders_all_info.to_excel(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_FILE_NAME}', index=False)
+                upload_file(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_FILE_NAME}', REMOTE_PATH + YANDEX_DISC_LAMODA_FILE_NAME)
             elif self.market_type == 'smart_premium':
-                orders_all_info.to_excel(f'{MAIN_DIR}/{BASE_ORDERS_FILE_NAME_SMART_PREMIUM}.xlsx', index=False)
+                orders_all_info.to_excel(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_SP_FILE_NAME}', index=False)
+                upload_file(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_SP_FILE_NAME}', REMOTE_PATH + YANDEX_DISC_LAMODA_SP_FILE_NAME)
             else:
                 raise ValueError('market_type must be ufo or smart_premium')
             orders_main_info = self.red.orders_main_info(orders_all_info)
@@ -36,9 +39,11 @@ class InfoRedactor:
             return agg_table
         else:
             if self.market_type == 'ufo':
-                orders_all_info = pd.read_excel(f'{MAIN_DIR}/{BASE_ORDERS_FILE_NAME}.xlsx')
+                download_file(REMOTE_PATH + YANDEX_DISC_LAMODA_FILE_NAME, LOCAL_LAMODA_PATH)
+                orders_all_info = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_FILE_NAME}')
             elif self.market_type == 'smart_premium':
-                orders_all_info = pd.read_excel(f'{MAIN_DIR}/{BASE_ORDERS_FILE_NAME_SMART_PREMIUM}.xlsx')
+                download_file(REMOTE_PATH + YANDEX_DISC_LAMODA_SP_FILE_NAME, LOCAL_LAMODA_SP_PATH)
+                orders_all_info = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_SP_FILE_NAME}')
             else:
                 raise ValueError('market_type must be ufo or smart_premium')
 

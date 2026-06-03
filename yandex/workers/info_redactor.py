@@ -1,10 +1,11 @@
 import pandas as pd
 
-from config import MAIN_DIR
-from yandex.config import BASE_ORDERS_FILE_NAME, BASE_RETURNS_FILE_NAME
+from config import MAIN_DIR, REMOTE_PATH
+from yandex.config import YANDEX_DISC_RETURNS_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_RETURNS_PATH, LOCAL_ORDERS_PATH
 from yandex.dto.info_yandex_dto import InfoYandexDTO
 from yandex.dto.orders_columns import OrdersColumnsDTO
 from yandex.services.redaction import RedactionService
+from yandex_disk import download_file, upload_file
 
 
 class InfoRedactor:
@@ -24,20 +25,25 @@ class InfoRedactor:
             returns_with_brand = self.red.merge_with_med_collections(info.returns, yandex_collections_merged)
 
             orders_all_info = self.red.merge_orders(info.all_orders, orders_with_brand)
-            orders_all_info.to_excel(f'{MAIN_DIR}/{BASE_ORDERS_FILE_NAME}.xlsx', index=False)
+            orders_all_info.to_excel(f'{MAIN_DIR}{YANDEX_DISC_ORDERS_FILE_NAME}', index=False)
+            upload_file(f'{MAIN_DIR}{YANDEX_DISC_ORDERS_FILE_NAME}', REMOTE_PATH + YANDEX_DISC_ORDERS_FILE_NAME)
             orders_main_info = self.red.orders_main_info(orders_all_info)
 
             returns_all_info = self.red.merge_returns(info.all_returns, returns_with_brand)
-            returns_all_info.to_excel(f'{MAIN_DIR}/{BASE_RETURNS_FILE_NAME}.xlsx', index=False)
+            returns_all_info.to_excel(f'{MAIN_DIR}{YANDEX_DISC_RETURNS_FILE_NAME}', index=False)
+            upload_file(f'{MAIN_DIR}{YANDEX_DISC_RETURNS_FILE_NAME}', REMOTE_PATH + YANDEX_DISC_RETURNS_FILE_NAME)
             returns_main_info = self.red.returns_main_info(returns_all_info)
 
             agg_table = self.red.merge_main_info(orders_main_info, returns_main_info)
             return agg_table
         else:
-            orders_all_info = pd.read_excel(f'{MAIN_DIR}/{BASE_ORDERS_FILE_NAME}.xlsx')
+            download_file(REMOTE_PATH + YANDEX_DISC_RETURNS_FILE_NAME, LOCAL_RETURNS_PATH)
+            download_file(REMOTE_PATH + YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_ORDERS_PATH)
+
+            orders_all_info = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_ORDERS_FILE_NAME}')
             orders_main_info = self.red.orders_main_info(orders_all_info)
 
-            returns_all_info = pd.read_excel(f'{MAIN_DIR}/{BASE_RETURNS_FILE_NAME}.xlsx')
+            returns_all_info = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_RETURNS_FILE_NAME}')
             returns_main_info = self.red.returns_main_info(returns_all_info)
 
             agg_table = self.red.merge_main_info(orders_main_info, returns_main_info)

@@ -2,13 +2,15 @@ from typing import Literal
 
 import pandas as pd
 
-from config import MAIN_DIR
+from config import MAIN_DIR, REMOTE_PATH
 from lamoda.api_key import ApiKeyManager
-from lamoda.config import BASE_ORDERS_FILE_NAME, BASE_ORDERS_FILE_NAME_SMART_PREMIUM
+from lamoda.config import YANDEX_DISC_LAMODA_FILE_NAME, LOCAL_LAMODA_PATH, YANDEX_DISC_LAMODA_SP_FILE_NAME, \
+    LOCAL_LAMODA_SP_PATH
 from lamoda.dto.columns_main_dto import ColumnsMainDTO
 from lamoda.dto.info_dto import InfoDTO
 from lamoda.service.api_service import APIService, MedService
 from lamoda.utils.date_helper import get_dates_for_request_by_month
+from yandex_disk import download_file
 
 
 class InfoCollector:
@@ -26,9 +28,11 @@ class InfoCollector:
 
         orders_month = self.api.get_orders_info_by_products(start_date=start_date, end_date=end_date)
         if self.market_type == 'ufo':
-            all_orders = pd.read_excel(f'{MAIN_DIR}/{BASE_ORDERS_FILE_NAME}.xlsx')
+            download_file(REMOTE_PATH + YANDEX_DISC_LAMODA_FILE_NAME, LOCAL_LAMODA_PATH)
+            all_orders = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_FILE_NAME}')
         elif self.market_type == 'smart_premium':
-            all_orders = pd.read_excel(f'{MAIN_DIR}/{BASE_ORDERS_FILE_NAME_SMART_PREMIUM}.xlsx')
+            download_file(REMOTE_PATH + YANDEX_DISC_LAMODA_SP_FILE_NAME, LOCAL_LAMODA_SP_PATH)
+            all_orders = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_SP_FILE_NAME}')
         else:
             raise ValueError('market_type must be ufo or smart_premium')
 
