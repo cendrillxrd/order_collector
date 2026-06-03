@@ -6,6 +6,7 @@ BASE_FILE_NAME = 'База'
 
 BASE_MAIN_COLUMNS_NAME = {
                      'sum_orders': agg_columns.sum_orders,
+                     'sum_shipment': agg_columns.sum_shipment,
                      'total_orders': agg_columns.total_orders,
                      'returned': agg_columns.returned,
                      'returned_sum': agg_columns.returned_sum,

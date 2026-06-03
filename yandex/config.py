@@ -63,6 +63,7 @@ BASE_RETURNS_COLUMNS_NAME = {
 
 BASE_MAIN_COLUMNS_NAME = {
                      'sum_orders': order_columns_main.sum_orders,
+                     'sum_shipment': order_columns_main.sum_shipment,
                      'total_orders': order_columns_main.total_orders,
                      'returned': order_columns_main.returned,
                      'returned_sum': order_columns_main.returned_sum,

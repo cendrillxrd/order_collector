@@ -42,6 +42,7 @@ class CorrOrdersStrategy(CorrectorStrategy):
                                    self.orders_main_info_columns.month, self.orders_main_info_columns.week,
                                    self.orders_main_info_columns.brand]).agg(
             sum_orders=(self.orders_columns.partner_agreed_price, 'sum'),
+            sum_shipment=(self.orders_columns.partner_agreed_price, 'sum'),
             total_orders=(self.orders_columns.id, 'count'),
             returned=(self.orders_columns.status_product, lambda x: x[x.isin(returned_statuses)].count()),
             total_main_orders=(self.orders_columns.id, 'nunique'),

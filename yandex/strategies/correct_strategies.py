@@ -42,6 +42,7 @@ class CorrOrdersStrategy(CorrectorStrategy):
                                    self.orders_main_info_columns.month, self.orders_main_info_columns.week,
                                    self.orders_main_info_columns.brand]).agg(
             sum_orders=(self.orders_columns.price, 'sum'),  # количество заказов в группе
+            sum_shipment=(self.orders_columns.price, 'sum'),  # количество заказов в группе
             total_orders=(self.orders_columns.order_id, 'count'),  # количество заказов в группе
             returned=(self.orders_columns.status, lambda x: x[x == 'CANCELLED'].count()),
             total_main_orders=(self.orders_columns.order_id, 'nunique'),

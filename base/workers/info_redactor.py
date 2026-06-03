@@ -9,9 +9,10 @@ class InfoRedactor:
         result = []
         for key, df in info_dict.items():
             orders = redaction.correction_dataframe_orders(df, key)
-            returns = redaction.correction_dataframe_returns(df, key)
-            agg_table = redaction.concat_main_info(orders, returns)
-            result.append(agg_table)
+            # returns = redaction.correction_dataframe_returns(df, key)
+            # agg_table = redaction.concat_main_info(orders, returns)
+            # result.append(agg_table)
+            result.append(orders)
         combined_df = pd.concat(result)
         return combined_df
 

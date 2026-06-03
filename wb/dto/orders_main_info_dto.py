@@ -9,6 +9,7 @@ class OrdersMainInfoColumnsDTO:
     week: str = 'Неделя'
     brand: str = 'Бренд'
     sum_orders: str = 'Сумма заказов'
+    sum_shipment: str = 'Сумма отгрузки'
     total_orders: str = 'Заказано шт'
     returned_sum: str = 'Возвраты на сумму'
     returned: str = 'Возвраты шт'

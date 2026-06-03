@@ -46,6 +46,7 @@ class CorrOrdersStrategy(CorrectorStrategy):
                                    self.orders_main_info_columns.month, self.orders_main_info_columns.week,
                                    self.orders_main_info_columns.brand]).agg(
             sum_orders=(self.orders_columns.price_with_discount, 'sum'),  # количество заказов в группе
+            sum_shipment=(self.orders_columns.price_with_discount, 'sum'),  # количество заказов в группе
             total_orders=(self.orders_columns.totalPrice, 'count'),  # количество заказов в группе
             returned=(self.orders_columns.isCanceled, 'sum'),
             returned_sum=('returned_value', 'sum'),

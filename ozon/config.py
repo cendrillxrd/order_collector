@@ -32,6 +32,7 @@ BASE_URLS = {
 
 BASE_COLUMNS_NAME = {'ID': order_columns_dto.offer_id,
                      'sum_orders': order_main_columns_dto.sum_orders,
+                     'sum_shipment': order_main_columns_dto.sum_shipment,
                      'total_orders': order_main_columns_dto.total_orders,
                      'returned': order_main_columns_dto.returned,
                      'returned_sum': order_main_columns_dto.returned_sum,
