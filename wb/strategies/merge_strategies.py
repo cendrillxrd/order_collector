@@ -7,39 +7,50 @@ from wb.dto.all_agg_info_dto import AllAggInfoColumnsDTO
 from wb.dto.orders_columns_dto import OrdersColumnsDTO
 from wb.dto.sales_columns_dto import SalesColumnsDTO
 
-orders_columns = OrdersColumnsDTO()
-sales_columns = SalesColumnsDTO()
-all_agg_info_columns = AllAggInfoColumnsDTO()
 
-class MergeStrategies(ABC):
+class MergeStrategy(ABC):
+    def __init__(self):
+        self.orders_columns = OrdersColumnsDTO()
+        self.sales_columns = SalesColumnsDTO()
+        self.all_agg_info_columns = AllAggInfoColumnsDTO()
+
     @abstractmethod
-    def merge(self, *args) -> pd.DataFrame:
+    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
         pass
 
-class MergeOrdersInfoStrategy(MergeStrategies):
-    def merge(self, df1: pd.DataFrame, df2: pd.DataFrame):
-        df1 = df1.set_index(orders_columns.srid)
-        df2 = df2.set_index(orders_columns.srid)
+class MergeOrdersInfoStrategy(MergeStrategy):
+    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
+        df1 = df1.set_index(self.orders_columns.srid)
+        df2 = df2.set_index(self.orders_columns.srid)
 
-        df_updated = df2.combine_first(df1).reset_index()
-        df_updated = df_updated[
-            [col for col in asdict(orders_columns).values() if col in df_updated.columns]].copy()
-        df_updated[orders_columns.date] = pd.to_datetime(df_updated[orders_columns.date])
-        df_updated.sort_values(by=orders_columns.date, inplace=True)
-        return df_updated
+        df_merged_orders = df2.combine_first(df1).reset_index()
+        df_merged_orders = df_merged_orders[[col for col in asdict(self.orders_columns).values() if col in df_merged_orders.columns]].copy()
+        df_merged_orders[self.orders_columns.date] = pd.to_datetime(df_merged_orders[self.orders_columns.date])
+        df_merged_orders[self.orders_columns.lastChangeDate] = pd.to_datetime(df_merged_orders[self.orders_columns.lastChangeDate])
+        df_merged_orders.sort_values(by=self.orders_columns.date, inplace=True)
+        return df_merged_orders
 
-class MergeSalesInfoStrategy(MergeStrategies):
-    def merge(self, df1: pd.DataFrame, df2: pd.DataFrame):
-        df_merged_sales = pd.concat([df1, df2[df1.columns]], ignore_index=True)
-        df_merged_sales[sales_columns.date] = pd.to_datetime(df_merged_sales[sales_columns.date])
+class MergeSalesInfoStrategy(MergeStrategy):
+    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
+        df1 = df1.set_index(self.sales_columns.srid)
+        df2 = df2.set_index(self.sales_columns.srid)
 
-        df_merged_sales.sort_values(by=sales_columns.date, inplace=True)
+        df_merged_sales = df2.combine_first(df1).reset_index()
+        df_merged_sales = df_merged_sales[[col for col in asdict(self.sales_columns).values() if col in df_merged_sales.columns]].copy()
+        df_merged_sales[self.sales_columns.date] = pd.to_datetime(df_merged_sales[self.sales_columns.date])
+        df_merged_sales[self.orders_columns.lastChangeDate] = pd.to_datetime(df_merged_sales[self.orders_columns.lastChangeDate])
+        df_merged_sales.sort_values(by=self.sales_columns.date, inplace=True)
         return df_merged_sales
 
-class MergeOrdersWithSalesStrategy(MergeStrategies):
-    def __init__(self, merge_on = [all_agg_info_columns.market, all_agg_info_columns.year, all_agg_info_columns.month, all_agg_info_columns.week, all_agg_info_columns.brand]):
-        self.merge_on = merge_on
+class MergeOrdersWithSalesStrategy(MergeStrategy):
+    def __init__(self):
+        super().__init__()
+        self.merge_on = [self.all_agg_info_columns.market,
+                         self.all_agg_info_columns.year,
+                         self.all_agg_info_columns.month,
+                         self.all_agg_info_columns.week,
+                         self.all_agg_info_columns.brand]
 
-    def merge(self, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
+    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
         merged = pd.concat([df1, df2]).groupby(self.merge_on, as_index=False).sum()
         return merged

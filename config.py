@@ -14,3 +14,10 @@ YANDEX_DISC_API_KEY = os.getenv('YANDEX_DISC_API_KEY')
 REMOTE_PATH = '/Выгрузка из базы'
 
 MAIN_DIR = f'{str(Path(__file__).parent)}'
+
+BASE_BRAND_NAMES = {
+                    'The Hills': 'THE HILLS',
+                    'Marc Cony': 'MARC CONY',
+                    'PEPE JEANS LONDON': 'Pepe Jeans',
+                    'Van Mich': 'VAN MICH',
+}

@@ -1,7 +1,7 @@
 import pandas as pd
 
 from config import MAIN_DIR, REMOTE_PATH
-from wb.config import YANDEX_DISC_SALES_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_SALES_PATH, LOCAL_ORDERS_PATH
+from wb.wb_config import YANDEX_DISC_SALES_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_SALES_PATH, LOCAL_ORDERS_PATH
 from wb.dto.info_dto import InfoDTO
 
 from wb.services.wb_service import WBService

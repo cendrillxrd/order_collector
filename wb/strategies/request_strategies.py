@@ -4,24 +4,27 @@ from dataclasses import asdict
 from datetime import timedelta, datetime
 
 from logger import setup_logger
-from wb.config import TIME_SLEEP_ORDERS, TIME_SLEEP_SALES
-from wb.dto.orders_dto import OrdersDTO
-from wb.dto.sales_dto import SalesDTO
+from wb.dto.request_config import RequestConfig
+from wb.wb_config import TIME_SLEEP_ORDERS, TIME_SLEEP_SALES, ApiType, UrlKey
+from wb.workers.clients import Client
 
 logger = setup_logger("my_app")
 
-class RequestStrategy(ABC):
+class RequestsStrategy(ABC):
     @abstractmethod
-    def get_info(self, client: 'Client', **kwargs) -> list[dict]:
+    def do_request(self, client: Client, *args, **kwargs) -> list[dict]:
         pass
 
-class ReqOrdersStrategy(RequestStrategy):
-    endpoint = '/api/v1/supplier/orders'
-    api_type = 'Analytics_Statistics_API_KEY'
-    url_key = 'statistics'
-    orders_dto = OrdersDTO()
+class ReqOrdersStrategy(RequestsStrategy):
+    def __init__(self):
+        self._config_base = RequestConfig(
+            method='GET',
+            api_type=ApiType.STATISTICS,
+            url_key=UrlKey.STATISTICS,
+            endpoint='/api/v1/supplier/orders',
+        )
 
-    def get_info(self, client: 'Client', **kwargs) -> list[dict]:
+    def do_request(self, client: Client, *args, **kwargs) -> list[dict]:
         """Обязательно передай date_from и date_to"""
         date_from = kwargs.get('date_from')
         date_to = kwargs.get('date_to')
@@ -46,16 +49,15 @@ class ReqOrdersStrategy(RequestStrategy):
         while current_date <= end_date:
             date_str = current_date.strftime('%Y-%m-%d')
             logger.info(f'Получение информации о заказах {date_str} (WB)')
-            params = asdict(self.orders_dto)
-            params['dateFrom'] = date_str
-
-            response = client.make_request(
-                method='GET',
-                api_type=self.api_type,
-                url_key=self.url_key,
-                endpoint=self.endpoint,
-                params=params
+            params = {'flag': 1, 'dateFrom': date_str}
+            config = RequestConfig(
+                method=self._config_base.method,
+                api_type=self._config_base.api_type,
+                url_key=self._config_base.url_key,
+                endpoint=self._config_base.endpoint,
+                params=params,
             )
+            response = client.make_request(config)
 
             all_results.extend(response)
 
@@ -66,13 +68,16 @@ class ReqOrdersStrategy(RequestStrategy):
 
         return all_results
 
-class ReqSalesStrategy(RequestStrategy):
-    endpoint = '/api/v1/supplier/sales'
-    api_type = 'Analytics_Statistics_API_KEY'
-    url_key = 'statistics'
-    sales_dto = SalesDTO()
+class ReqSalesStrategy(RequestsStrategy):
+    def __init__(self):
+        self._config_base = RequestConfig(
+            method='GET',
+            api_type=ApiType.STATISTICS,
+            url_key=UrlKey.STATISTICS,
+            endpoint='/api/v1/supplier/sales',
+        )
 
-    def get_info(self, client: 'Client', **kwargs) -> list[dict]:
+    def do_request(self, client: Client, *args, **kwargs) -> list[dict]:
         """Обязательно передай date_from и date_to"""
         date_from = kwargs.get('date_from')
         date_to = kwargs.get('date_to')
@@ -98,16 +103,16 @@ class ReqSalesStrategy(RequestStrategy):
             date_str = current_date.strftime('%Y-%m-%d')
             logger.info(f'Получение информации о продажах {date_str} (WB)')
 
-            params = asdict(self.sales_dto)
-            params['dateFrom'] = date_str
+            params = {'flag': 1, 'dateFrom': date_str}
 
-            response = client.make_request(
-                method='GET',
-                api_type=self.api_type,
-                url_key=self.url_key,
-                endpoint=self.endpoint,
-                params=params
+            config = RequestConfig(
+                method=self._config_base.method,
+                api_type=self._config_base.api_type,
+                url_key=self._config_base.url_key,
+                endpoint=self._config_base.endpoint,
+                params=params,
             )
+            response = client.make_request(config)
 
             all_results.extend(response)
 

@@ -1,5 +1,5 @@
 import os
-
+from enum import StrEnum
 from dotenv import load_dotenv
 
 from wb.dto.orders_columns_dto import OrdersColumnsDTO
@@ -11,20 +11,22 @@ order_columns = OrdersColumnsDTO()
 sales_columns = SalesColumnsDTO()
 order_columns_main = OrdersMainInfoColumnsDTO()
 
-API_KEYS = {
-    'Analytics_Statistics_API_KEY': os.getenv('ANALYTICS_STATISTICS_API_KEY'),
-    'Content_Marketplace_API_KEY': os.getenv('CONTENT_MARKETPLACE_API_KEY'),
-    'Price_discount_API_KEY': os.getenv('PRICE_DISCOUNT_API_KEY')
+class ApiType(StrEnum):
+    CONTENT = 'Content_Marketplace_API_KEY'
+    STATISTICS = 'Statistics_API_KEY'
+    PRICES = 'Price_discount_API_KEY'
+
+API_KEYS: dict[ApiType, str | None] = {
+    ApiType.CONTENT: os.getenv('CONTENT_MARKETPLACE_API_KEY'),
+    ApiType.STATISTICS: os.getenv('ANALYTICS_STATISTICS_API_KEY'),
+    ApiType.PRICES: os.getenv('PRICE_DISCOUNT_API_KEY'),
 }
 
-BASE_URLS = {
-    'suppliers': 'https://suppliers-api.wildberries.ru',
-    'content': 'https://content-api.wildberries.ru',
-    'seller-analytics': 'https://seller-analytics-api.wildberries.ru',
-    'statistics': 'https://statistics-api.wildberries.ru',
-    'marketplace': 'https://marketplace-api.wildberries.ru',
-    'dp-calendar': 'https://dp-calendar-api.wildberries.ru',
-    'discounts-prices': 'https://discounts-prices-api.wildberries.ru',
+class UrlKey(StrEnum):
+    STATISTICS = 'statistics'
+
+BASE_URLS: dict[UrlKey, str] = {
+    UrlKey.STATISTICS: 'https://statistics-api.wildberries.ru',
 }
 
 BASE_MAIN_COLUMNS_NAME = {
@@ -86,6 +88,10 @@ BASE_COLUMNS_SALES_NAME = {
 
 TIME_SLEEP_ORDERS = 60  # >= 60
 TIME_SLEEP_SALES = 60  # >= 60
+RETRYABLE_STATUS_CODES = (429, 500, 502, 503, 504)
+MAX_WAIT_SECONDS = 10
+
+MARKET_NAME = 'WB'
 
 YANDEX_DISC_SALES_FILE_NAME = '/Продажи WB.xlsx'
 YANDEX_DISC_ORDERS_FILE_NAME = '/Заказы WB.xlsx'
