@@ -1,17 +1,17 @@
 import pandas as pd
 
-from wb.context.context_wb_corrector import ContextWbCorrector
-from wb.context.context_wb_merge import ContextWbMerge
+from wb.contexts.context import ContextWbCorrect
+from wb.contexts.context import ContextWbMerge
 from wb.strategies.correct_strategies import (CorrOrdersStrategy, CorrSalesStrategy, )
 from wb.strategies.merge_strategies import MergeOrdersInfoStrategy, MergeSalesInfoStrategy, MergeOrdersWithSalesStrategy
 
-def with_strategies(merge_strategy=None, corrector_strategy=None):
+def with_strategies(merge_strategy=None, correct_strategy=None):
     def decorator(method):
         def wrapper(self, *args, **kwargs):
             if merge_strategy is not None:
                 self.merger.strategy = merge_strategy()
-            if corrector_strategy is not None:
-                self.corrector.strategy = corrector_strategy()
+            if correct_strategy is not None:
+                self.corrector.strategy = correct_strategy()
             return method(self, *args, **kwargs)
 
         return wrapper
@@ -22,14 +22,14 @@ def with_strategies(merge_strategy=None, corrector_strategy=None):
 class RedactionService:
     def __init__(self):
         self.merger = ContextWbMerge()
-        self.corrector = ContextWbCorrector()
+        self.corrector = ContextWbCorrect()
 
-    @with_strategies(corrector_strategy=CorrOrdersStrategy)
+    @with_strategies(correct_strategy=CorrOrdersStrategy)
     def get_orders_main_info(self, orders_df: pd.DataFrame) -> pd.DataFrame:
         corr_orders = self.corrector.correct_info(orders_df)
         return corr_orders
 
-    @with_strategies(corrector_strategy=CorrSalesStrategy)
+    @with_strategies(correct_strategy=CorrSalesStrategy)
     def get_sales_main_info(self, sales_df: pd.DataFrame) -> pd.DataFrame:
         corr_sales = self.corrector.correct_info(sales_df)
         return corr_sales

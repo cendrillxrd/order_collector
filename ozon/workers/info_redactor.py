@@ -1,7 +1,7 @@
 import pandas as pd
 
 from config import MAIN_DIR, REMOTE_PATH
-from ozon.config import YANDEX_DISC_RETURNS_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_RETURNS_PATH, LOCAL_ORDERS_PATH
+from ozon.ozon_config import YANDEX_DISC_RETURNS_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_RETURNS_PATH, LOCAL_ORDERS_PATH
 from ozon.dto.info_dto import InfoDTO
 from ozon.dto.orders_columns_dto import OrdersColumnsDTO
 from ozon.services.red import RedactionService

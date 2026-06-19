@@ -1,13 +1,13 @@
 import pandas as pd
 
-from ozon.strategies.correct_strategies import CorrectorStrategy
+from ozon.strategies.correct_strategies import CorrectStrategy
 
 
 class Corrector:
     def __init__(self):
         self.__strategy = None
 
-    def set_strategy(self, strategy: CorrectorStrategy):
+    def set_strategy(self, strategy: CorrectStrategy):
         self.__strategy = strategy
 
     def correct(self, df: pd.DataFrame, **kwargs) -> pd.DataFrame:

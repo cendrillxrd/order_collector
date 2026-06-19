@@ -44,7 +44,7 @@ class ConvSalesStrategy(ConvertStrategy):
         df[self.sales_columns.lastChangeDate] = df[self.sales_columns.lastChangeDate].str.replace('T', ' ', regex=False)
 
         df[self.sales_columns.brand] = df[self.sales_columns.brand].replace('PEPE JEANS LONDON', 'Pepe Jeans')
-        df[self.orders_columns.brand] = df[self.orders_columns.brand].replace('MARC CONY', 'Marc Cony')
+        df[self.sales_columns.brand] = df[self.sales_columns.brand].replace('MARC CONY', 'Marc Cony')
         
         df = df[[col for col in asdict(self.sales_columns).values() if col in df.columns]].copy()
         return df

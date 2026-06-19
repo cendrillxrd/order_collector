@@ -3,14 +3,14 @@ from dataclasses import asdict
 
 import pandas as pd
 
-from ozon.config import BASE_COLUMNS_NAME
+from ozon.ozon_config import BASE_COLUMNS_NAME
 from ozon.dto.orders_columns_dto import OrdersColumnsDTO
 from ozon.dto.orders_main_info_dto import OrdersMainInfoColumnsDTO
 from ozon.dto.returns_columns_dto import ReturnsColumnsDTO
 from ozon.dto.returns_main_info_columns import ReturnsMainInfoColumnsDTO
 
 
-class CorrectorStrategy(ABC):
+class CorrectStrategy(ABC):
     def __init__(self):
         self.orders_columns = OrdersColumnsDTO()
         self.returns_columns = ReturnsColumnsDTO()
@@ -18,11 +18,11 @@ class CorrectorStrategy(ABC):
         self.returns_main_info_columns = ReturnsMainInfoColumnsDTO()
 
     @abstractmethod
-    def correcting(self, df: pd.DataFrame) -> pd.DataFrame:
+    def do_correct(self, df: pd.DataFrame, **kwargs) -> pd.DataFrame:
         pass
 
-class CorrOrdersStrategy(CorrectorStrategy):
-    def correcting(self, orders: pd.DataFrame) -> pd.DataFrame:
+class CorrOrdersStrategy(CorrectStrategy):
+    def do_correct(self, orders: pd.DataFrame, **kwargs) -> pd.DataFrame:
         orders[self.orders_columns.brand] = orders[self.orders_columns.brand].str.strip()
         orders[self.orders_columns.brand] = orders[self.orders_columns.brand].replace('Marc Cony', 'MARC CONY')
         orders[self.orders_columns.brand] = orders[self.orders_columns.brand].replace('REDPIN', 'Red Pin')
@@ -59,8 +59,8 @@ class CorrOrdersStrategy(CorrectorStrategy):
                   axis=1)
         return grouped
 
-class CorrReturnsStrategy(CorrectorStrategy):
-    def correcting(self, returns: pd.DataFrame) -> pd.DataFrame:
+class CorrReturnsStrategy(CorrectStrategy):
+    def do_correct(self, returns: pd.DataFrame, **kwargs) -> pd.DataFrame:
         returns[self.returns_columns.brand] = returns[self.returns_columns.brand].str.strip()
         returns[self.returns_columns.brand] = returns[self.returns_columns.brand].replace('Marc Cony', 'MARC CONY')
         returns[self.returns_columns.brand] = returns[self.returns_columns.brand].replace('REDPIN', 'Red Pin')

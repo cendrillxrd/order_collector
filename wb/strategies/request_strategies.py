@@ -4,26 +4,18 @@ from dataclasses import asdict
 from datetime import timedelta, datetime
 
 from logger import setup_logger
-from wb.dto.request_config import RequestConfig
-from wb.wb_config import TIME_SLEEP_ORDERS, TIME_SLEEP_SALES, ApiType, UrlKey
+from wb.dto.request_wb_config import RequestWBConfig
+from wb.wb_config import TIME_SLEEP_ORDERS, TIME_SLEEP_SALES, ApiType, WBUrlKey
 from wb.workers.clients import Client
 
 logger = setup_logger("my_app")
 
-class RequestsStrategy(ABC):
+class RequestStrategy(ABC):
     @abstractmethod
     def do_request(self, client: Client, *args, **kwargs) -> list[dict]:
         pass
 
-class ReqOrdersStrategy(RequestsStrategy):
-    def __init__(self):
-        self._config_base = RequestConfig(
-            method='GET',
-            api_type=ApiType.STATISTICS,
-            url_key=UrlKey.STATISTICS,
-            endpoint='/api/v1/supplier/orders',
-        )
-
+class ReqOrdersStrategy(RequestStrategy):
     def do_request(self, client: Client, *args, **kwargs) -> list[dict]:
         """Обязательно передай date_from и date_to"""
         date_from = kwargs.get('date_from')
@@ -50,11 +42,11 @@ class ReqOrdersStrategy(RequestsStrategy):
             date_str = current_date.strftime('%Y-%m-%d')
             logger.info(f'Получение информации о заказах {date_str} (WB)')
             params = {'flag': 1, 'dateFrom': date_str}
-            config = RequestConfig(
-                method=self._config_base.method,
-                api_type=self._config_base.api_type,
-                url_key=self._config_base.url_key,
-                endpoint=self._config_base.endpoint,
+            config = RequestWBConfig(
+                method='GET',
+                api_type=ApiType.STATISTICS,
+                url_key=WBUrlKey.STATISTICS,
+                endpoint='/api/v1/supplier/orders',
                 params=params,
             )
             response = client.make_request(config)
@@ -68,15 +60,7 @@ class ReqOrdersStrategy(RequestsStrategy):
 
         return all_results
 
-class ReqSalesStrategy(RequestsStrategy):
-    def __init__(self):
-        self._config_base = RequestConfig(
-            method='GET',
-            api_type=ApiType.STATISTICS,
-            url_key=UrlKey.STATISTICS,
-            endpoint='/api/v1/supplier/sales',
-        )
-
+class ReqSalesStrategy(RequestStrategy):
     def do_request(self, client: Client, *args, **kwargs) -> list[dict]:
         """Обязательно передай date_from и date_to"""
         date_from = kwargs.get('date_from')
@@ -105,11 +89,11 @@ class ReqSalesStrategy(RequestsStrategy):
 
             params = {'flag': 1, 'dateFrom': date_str}
 
-            config = RequestConfig(
-                method=self._config_base.method,
-                api_type=self._config_base.api_type,
-                url_key=self._config_base.url_key,
-                endpoint=self._config_base.endpoint,
+            config = RequestWBConfig(
+                method='GET',
+                api_type=ApiType.STATISTICS,
+                url_key=WBUrlKey.STATISTICS,
+                endpoint='/api/v1/supplier/sales',
                 params=params,
             )
             response = client.make_request(config)

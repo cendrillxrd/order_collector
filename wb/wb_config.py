@@ -22,11 +22,11 @@ API_KEYS: dict[ApiType, str | None] = {
     ApiType.PRICES: os.getenv('PRICE_DISCOUNT_API_KEY'),
 }
 
-class UrlKey(StrEnum):
+class WBUrlKey(StrEnum):
     STATISTICS = 'statistics'
 
-BASE_URLS: dict[UrlKey, str] = {
-    UrlKey.STATISTICS: 'https://statistics-api.wildberries.ru',
+BASE_URLS: dict[WBUrlKey, str] = {
+    WBUrlKey.STATISTICS: 'https://statistics-api.wildberries.ru',
 }
 
 BASE_MAIN_COLUMNS_NAME = {

@@ -1,33 +1,42 @@
-import time
+import random
 from abc import ABC, abstractmethod
 
+from logger import setup_logger
+from ozon.dto.request_http_config import RequestHTTPConfig
+from ozon.dto.request_ozon_config import RequestOZONConfig
+from ozon.ozon_config import API_KEY, BASE_URLS, CLIENT_ID, MAX_WAIT_SECONDS, RETRYABLE_STATUS_CODES, OZONUrlKey
+import time
 import requests
 from typing import Dict
-
-from logger import setup_logger
-from wb.dto.request_wb_config import RequestWBConfig
-from wb.wb_config import BASE_URLS, API_KEYS, RETRYABLE_STATUS_CODES, MAX_WAIT_SECONDS
 
 logger = setup_logger("my_app")
 
 class Client(ABC):
     @abstractmethod
-    def make_request(self, config: RequestWBConfig):
+    def make_request(self, config):
         pass
 
-class WildberriesAPIClient(Client):
-    def __init__(self, retries: int = 5, base_urls: Dict[str, str] = BASE_URLS, api_keys: Dict[str, str] = API_KEYS):
+class OzonAPIClient(Client):
+    def __init__(
+        self,
+        retries: int = 5,
+        base_urls: Dict[OZONUrlKey, str] = BASE_URLS,
+        client_id: str = CLIENT_ID,
+        api_key: str = API_KEY,
+    ):
         self.base_urls = base_urls
-        self.api_keys = api_keys
+        self.client_id = client_id
+        self.api_key = api_key
         self.retries = retries
         self.session = requests.Session()
 
-    def make_request(self, config: RequestWBConfig):
+    def make_request(self, config: RequestOZONConfig):
         url = f'{self.base_urls[config.url_key]}{config.endpoint}'
         logger.info(f'Выполнение запроса по адресу {url}')
 
         self.session.headers.update({
-            'Authorization': self.api_keys[config.api_type],
+            'Client-Id': self.client_id,
+            'Api-Key': self.api_key,
             'Content-Type': 'application/zip' if config.zip_needs else 'application/json',
         })
 
@@ -38,7 +47,7 @@ class WildberriesAPIClient(Client):
                     url=url,
                     params=config.params,
                     json=config.payload,
-                    timeout=30,
+                    timeout=(30, 60),
                 )
                 logger.info(f'Запрос выполнен (попытка {attempt + 1}/{self.retries}), статус: {response.status_code}')
                 response.raise_for_status()
@@ -63,6 +72,7 @@ class WildberriesAPIClient(Client):
                 if not self._should_retry(attempt):
                     raise
                 self._wait_before_retry(attempt, 'ошибка соединения')
+
         return None
 
     def _should_retry(self, attempt: int) -> bool:
@@ -70,6 +80,16 @@ class WildberriesAPIClient(Client):
 
     @staticmethod
     def _wait_before_retry(attempt: int, reason: str) -> None:
-        wait_time = min(2 ** attempt, MAX_WAIT_SECONDS)
-        logger.info(f'Повтор через {wait_time} сек. (причина: {reason})')
+        wait_time = min(2 ** attempt + random.uniform(0.1, 0.5), MAX_WAIT_SECONDS)
+        logger.info(f'Повтор через {wait_time:.1f} сек. (причина: {reason})')
         time.sleep(wait_time)
+
+class HttpClient(Client):
+    def __init__(self, base_urls: Dict[OZONUrlKey, str] = BASE_URLS):
+        self.base_urls = base_urls
+
+    def make_request(self, config: RequestHTTPConfig):
+        url = f'{self.base_urls[config.url_key]}{config.endpoint}'
+        logger.info(f'Выполнение запроса по адресу {url}')
+        response = requests.get(url, timeout=(120, 120))
+        return response

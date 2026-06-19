@@ -1,33 +1,35 @@
 import os
 from pathlib import Path
+from enum import StrEnum
 from dotenv import load_dotenv
 from ozon.dto.orders_columns_dto import OrdersColumnsDTO
 from ozon.dto.orders_main_info_dto import OrdersMainInfoColumnsDTO
 from ozon.dto.returns_columns_dto import ReturnsColumnsDTO
-from yandex.config import TIME_SLEEP_REPORT, return_columns
 
 order_columns_dto = OrdersColumnsDTO()
 order_main_columns_dto = OrdersMainInfoColumnsDTO()
 return_columns_dto = ReturnsColumnsDTO()
 
-# from dto.columns_dto import MainColumnsDTO
-# main_columns_dto = MainColumnsDTO()
-
 load_dotenv()
-
-DEBUG = os.getenv('DEBUG')
-HOME_DIR = Path(__file__).resolve().parent.parent
 
 API_KEY = os.getenv('OZON_API_KEY')
 CLIENT_ID = os.getenv('OZON_CLIENT_ID')
 
-BASE_URLS = {
-    'ozon': 'https://api-seller.ozon.ru',
-    'med_collections_1': 'https://med-online.ru/upload/acrit.exportproplus/file.OZON.xlsx?1740656479',
-    'med_collections_2': 'https://med-online.ru/upload/acrit.exportproplus/file.OZONdop.xlsx?1744707024',
-    'med_collections_3': 'https://med-online.ru/upload/acrit.exportproplus/file.match-bikk.xlsx?1769676747',
-    'med_collections_4': 'https://med-online.ru/upload/acrit.exportproplus/file.Strell-Truss-Redp.xlsx?1772624157',
-    'http': '',
+class OZONUrlKey(StrEnum):
+    OZON = 'ozon'
+    MED_COLLECTIONS_1 = 'med_collections_1'
+    MED_COLLECTIONS_2 = 'med_collections_2'
+    MED_COLLECTIONS_3 = 'med_collections_3'
+    MED_COLLECTIONS_4 = 'med_collections_4'
+    HTTP = ''
+
+BASE_URLS: dict[OZONUrlKey, str] = {
+    OZONUrlKey.OZON: 'https://api-seller.ozon.ru',
+    OZONUrlKey.MED_COLLECTIONS_1: 'https://med-online.ru/upload/acrit.exportproplus/file.OZON.xlsx?1740656479',
+    OZONUrlKey.MED_COLLECTIONS_2: 'https://med-online.ru/upload/acrit.exportproplus/file.OZONdop.xlsx?1744707024',
+    OZONUrlKey.MED_COLLECTIONS_3: 'https://med-online.ru/upload/acrit.exportproplus/file.match-bikk.xlsx?1769676747',
+    OZONUrlKey.MED_COLLECTIONS_4: 'https://med-online.ru/upload/acrit.exportproplus/file.Strell-Truss-Redp.xlsx?1772624157',
+    OZONUrlKey.HTTP: '',
 }
 
 BASE_COLUMNS_NAME = {'ID': order_columns_dto.offer_id,
@@ -67,8 +69,13 @@ TIME_SLEEP_REPORT = 60
 TIME_SLEEP_CARDS_LINK = 30
 TIME_SLEEP_ATTRIBUTES_LINK = 30
 TIME_SLEEP_STOCKS_FBS = 0.5
+RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
+MAX_WAIT_SECONDS = 30
+MAX_GET_CODE_ATTEMPTS = 10
 
 SEX_ATTRIBUTE_ID = 9163
+SCHEMAS = ('fbs', 'fbo')
+VISIBILITIES = ['ALL', 'ARCHIVED']
 
 FILE_PATH = 'C:/Users/Admin/Desktop/'
 

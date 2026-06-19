@@ -38,7 +38,7 @@ class MergeSalesInfoStrategy(MergeStrategy):
         df_merged_sales = df2.combine_first(df1).reset_index()
         df_merged_sales = df_merged_sales[[col for col in asdict(self.sales_columns).values() if col in df_merged_sales.columns]].copy()
         df_merged_sales[self.sales_columns.date] = pd.to_datetime(df_merged_sales[self.sales_columns.date])
-        df_merged_sales[self.orders_columns.lastChangeDate] = pd.to_datetime(df_merged_sales[self.orders_columns.lastChangeDate])
+        df_merged_sales[self.sales_columns.lastChangeDate] = pd.to_datetime(df_merged_sales[self.sales_columns.lastChangeDate])
         df_merged_sales.sort_values(by=self.sales_columns.date, inplace=True)
         return df_merged_sales
 
