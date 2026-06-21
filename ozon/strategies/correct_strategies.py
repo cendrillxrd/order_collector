@@ -8,6 +8,7 @@ from ozon.dto.orders_columns_dto import OrdersColumnsDTO
 from ozon.dto.orders_main_info_dto import OrdersMainInfoColumnsDTO
 from ozon.dto.returns_columns_dto import ReturnsColumnsDTO
 from ozon.dto.returns_main_info_columns import ReturnsMainInfoColumnsDTO
+from ozon.utils.corr_helpers import correct_columns_name
 
 
 class CorrectStrategy(ABC):
@@ -51,12 +52,7 @@ class CorrOrdersStrategy(CorrectStrategy):
             returned_sum = ('canceled_price', 'sum'),
         ).reset_index()
 
-        columns_name = [column for column in grouped.columns if column in BASE_COLUMNS_NAME]
-
-        columns_rename = {k: BASE_COLUMNS_NAME.get(k) for k in columns_name}
-        grouped.rename(columns_rename,
-                  inplace=True,
-                  axis=1)
+        grouped = correct_columns_name(grouped, BASE_COLUMNS_NAME)
         return grouped
 
 class CorrReturnsStrategy(CorrectStrategy):
@@ -83,10 +79,5 @@ class CorrReturnsStrategy(CorrectStrategy):
             returned_sum=(self.returns_columns.price, 'sum'),
         ).reset_index()
 
-        columns_name = [column for column in grouped.columns if column in BASE_COLUMNS_NAME]
-
-        columns_rename = {k: BASE_COLUMNS_NAME.get(k) for k in columns_name}
-        grouped.rename(columns_rename,
-                  inplace=True,
-                  axis=1)
+        grouped = correct_columns_name(grouped, BASE_COLUMNS_NAME)
         return grouped

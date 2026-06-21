@@ -97,7 +97,8 @@ class OzonService:
             cards = self.get_info_report(file_link)
             cards_df = self.converter.convert_info(cards)
             result.append(cards_df)
-        return pd.concat(result, ignore_index=True)
+        combined = pd.concat(result, ignore_index=True)
+        return combined
 
     @with_strategies(client_type='api', request_strategy=ReqCardsInfoReportStrategy)
     def create_info_report_cards(self, visibility: str) -> str:

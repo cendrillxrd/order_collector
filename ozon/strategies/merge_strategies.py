@@ -38,6 +38,8 @@ class MergeOrdersInfoStrategy(MergeStrategy):
         return df
 
     def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, *args, **kwargs):
+        df1 = df1.copy()
+        df2 = df2.copy()
         df1[orders_columns.posting_number] = df1[orders_columns.posting_number].astype(str)
         df1[orders_columns.offer_id] = df1[orders_columns.offer_id].astype(str)
         df2[orders_columns.posting_number] = df2[orders_columns.posting_number].astype(str)
@@ -84,6 +86,8 @@ class MergeReturnsInfoStrategy(MergeStrategy):
         return df
 
     def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, *args, **kwargs):
+        df1 = df1.copy()
+        df2 = df2.copy()
         df1[returns_columns.posting_number] = df1[returns_columns.posting_number].astype(str)
         df1[returns_columns.offer_id] = df1[returns_columns.offer_id].astype(str)
         df2[returns_columns.posting_number] = df2[returns_columns.posting_number].astype(str)
@@ -120,8 +124,8 @@ class MergeReturnsInfoStrategy(MergeStrategy):
         return df_updated
 
 class MergeOrdersWithReturnsStrategy(MergeStrategy):
-    def __init__(self, merge_on = [all_agg_info_columns.market, all_agg_info_columns.year, all_agg_info_columns.month, all_agg_info_columns.week, all_agg_info_columns.brand]):
-        self.merge_on = merge_on
+    def __init__(self):
+        self.merge_on = [all_agg_info_columns.market, all_agg_info_columns.year, all_agg_info_columns.month, all_agg_info_columns.week, all_agg_info_columns.brand]
 
     def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
         merged = pd.concat([df1, df2]).groupby(self.merge_on, as_index=False).sum()

@@ -7,9 +7,6 @@ from ozon.contexts.context import ContextMerge
 from ozon.strategies.correct_strategies import CorrOrdersStrategy, CorrReturnsStrategy
 from ozon.strategies.merge_strategies import MergeWithBrandStrategy, \
     MergeOrdersInfoStrategy, MergeReturnsInfoStrategy, MergeOrdersWithReturnsStrategy
-from ozon.workers.corrector import Corrector
-from ozon.workers.merger import Merger
-
 
 
 
