@@ -1,7 +1,3 @@
-from datetime import datetime, timezone, timedelta
-
-import pandas as pd
-
 from dateutil.relativedelta import relativedelta
 
 def date_month_ago():

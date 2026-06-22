@@ -18,11 +18,8 @@ class InfoRedactor:
 
     def redact_info(self, info: InfoDTO, get_new_info: bool = False) -> pd.DataFrame:
         if get_new_info:
-            try:
-                upsert_orders(info.orders)
-                upsert_sales(info.sales)
-            except Exception as e:
-                pass
+            upsert_orders(info.orders)
+            upsert_sales(info.sales)
 
             sales_all_info = self.red.merge_sales(info.all_sales, info.sales)
             sales_all_info.to_excel(f'{MAIN_DIR}{YANDEX_DISC_SALES_FILE_NAME}', index=False)

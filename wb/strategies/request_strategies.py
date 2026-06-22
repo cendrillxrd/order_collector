@@ -1,6 +1,5 @@
 import time
 from abc import ABC, abstractmethod
-from dataclasses import asdict
 from datetime import timedelta, datetime
 
 from logger import setup_logger

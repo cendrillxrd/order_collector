@@ -24,9 +24,6 @@ class InfoCollector:
         returns = self.ozon_service.get_returns(time_from, time_to)
         all_returns = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_RETURNS_FILE_NAME}')
 
-        # "time_from": date_month_ago(), # "2026-04-27T00:00:00Z"
-        # "time_to": end_of_last_week() # "2026-05-03T23:59:59Z"
-
         processed_at_from = get_month_ago_iso() # "2026-04-27T00:00:00Z"
         processed_at_to = get_last_sunday_end_iso() # "2026-05-03T23:59:59Z"
 

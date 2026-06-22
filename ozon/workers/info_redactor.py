@@ -4,6 +4,7 @@ from config import MAIN_DIR, REMOTE_PATH
 from ozon.ozon_config import YANDEX_DISC_RETURNS_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_RETURNS_PATH, LOCAL_ORDERS_PATH
 from ozon.dto.info_dto import InfoDTO
 from ozon.dto.orders_columns_dto import OrdersColumnsDTO
+from ozon.repositories.db_repository import upsert_ozon_orders, upsert_ozon_returns
 from ozon.services.red import RedactionService
 from yandex_disk import download_file, upload_file
 
@@ -15,6 +16,9 @@ class InfoRedactor:
 
     def redact_info(self, info: InfoDTO, get_new_info: bool = False) -> pd.DataFrame:
         if get_new_info:
+            upsert_ozon_orders(info.orders)
+            upsert_ozon_returns(info.returns)
+
             orders_with_brand = self.red.merge_with_brand(info.orders, info.cards_info)
             returns_with_brand = self.red.merge_with_brand(info.returns, info.cards_info)
 

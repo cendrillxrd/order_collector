@@ -17,18 +17,10 @@ CLIENT_ID = os.getenv('OZON_CLIENT_ID')
 
 class OZONUrlKey(StrEnum):
     OZON = 'ozon'
-    MED_COLLECTIONS_1 = 'med_collections_1'
-    MED_COLLECTIONS_2 = 'med_collections_2'
-    MED_COLLECTIONS_3 = 'med_collections_3'
-    MED_COLLECTIONS_4 = 'med_collections_4'
     HTTP = ''
 
 BASE_URLS: dict[OZONUrlKey, str] = {
     OZONUrlKey.OZON: 'https://api-seller.ozon.ru',
-    OZONUrlKey.MED_COLLECTIONS_1: 'https://med-online.ru/upload/acrit.exportproplus/file.OZON.xlsx?1740656479',
-    OZONUrlKey.MED_COLLECTIONS_2: 'https://med-online.ru/upload/acrit.exportproplus/file.OZONdop.xlsx?1744707024',
-    OZONUrlKey.MED_COLLECTIONS_3: 'https://med-online.ru/upload/acrit.exportproplus/file.match-bikk.xlsx?1769676747',
-    OZONUrlKey.MED_COLLECTIONS_4: 'https://med-online.ru/upload/acrit.exportproplus/file.Strell-Truss-Redp.xlsx?1772624157',
     OZONUrlKey.HTTP: '',
 }
 
@@ -78,6 +70,7 @@ SCHEMAS = ('fbs', 'fbo')
 VISIBILITIES = ['ALL', 'ARCHIVED']
 
 FILE_PATH = 'C:/Users/Admin/Desktop/'
+MARKET_NAME = 'OZON'
 
 YANDEX_DISC_RETURNS_FILE_NAME = '/Возвраты OZON.xlsx'
 YANDEX_DISC_ORDERS_FILE_NAME = '/Заказы OZON.xlsx'

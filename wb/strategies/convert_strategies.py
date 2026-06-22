@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import asdict
 
+from config import BASE_BRAND_NAMES
 from wb.dto.orders_columns_dto import OrdersColumnsDTO
 
 import pandas as pd
@@ -27,12 +28,12 @@ class ConvOrdersStrategy(ConvertStrategy):
         df[self.orders_columns.date] = df[self.orders_columns.date].str.replace('T', ' ', regex=False)
         df[self.orders_columns.lastChangeDate] = df[self.orders_columns.lastChangeDate].str.replace('T', ' ', regex=False)
 
-        df[self.orders_columns.brand] = df[self.orders_columns.brand].replace('PEPE JEANS LONDON', 'Pepe Jeans')
-        df[self.orders_columns.brand] = df[self.orders_columns.brand].replace('MARC CONY', 'Marc Cony')
+        for key, value in BASE_BRAND_NAMES.items():
+            df[self.orders_columns.brand] = df[self.orders_columns.brand].replace(key, value)
+
         df[self.orders_columns.price_with_discount] = df[self.orders_columns.totalPrice] * (1 - df[self.orders_columns.discountPercent] / 100)
 
         df = df[[col for col in asdict(self.orders_columns).values() if col in df.columns]].copy()
-
         return df
 
 class ConvSalesStrategy(ConvertStrategy):
@@ -43,8 +44,8 @@ class ConvSalesStrategy(ConvertStrategy):
         df[self.sales_columns.date] = df[self.sales_columns.date].str.replace('T', ' ', regex=False)
         df[self.sales_columns.lastChangeDate] = df[self.sales_columns.lastChangeDate].str.replace('T', ' ', regex=False)
 
-        df[self.sales_columns.brand] = df[self.sales_columns.brand].replace('PEPE JEANS LONDON', 'Pepe Jeans')
-        df[self.sales_columns.brand] = df[self.sales_columns.brand].replace('MARC CONY', 'Marc Cony')
+        for key, value in BASE_BRAND_NAMES.items():
+            df[self.orders_columns.brand] = df[self.orders_columns.brand].replace(key, value)
         
         df = df[[col for col in asdict(self.sales_columns).values() if col in df.columns]].copy()
         return df

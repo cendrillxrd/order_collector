@@ -13,7 +13,6 @@ class OrdersColumnsDTO:
     brand: str = 'Бренд'
     name: str = 'Название товара'
     color: str = 'Цвет товара'
-    size: str = 'Название предмета'
     sku: str = 'SKU'
     offer_id: str = 'Артикул'
     quantity: str = 'Количество'
