@@ -1,6 +1,7 @@
 import pandas as pd
 
 from config import MAIN_DIR, REMOTE_PATH
+from wb.repositories.db_repository import upsert_orders, upsert_sales
 from wb.wb_config import YANDEX_DISC_SALES_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_SALES_PATH, LOCAL_ORDERS_PATH
 from wb.dto.info_dto import InfoDTO
 from wb.dto.orders_columns_dto import OrdersColumnsDTO
@@ -17,6 +18,12 @@ class InfoRedactor:
 
     def redact_info(self, info: InfoDTO, get_new_info: bool = False) -> pd.DataFrame:
         if get_new_info:
+            try:
+                upsert_orders(info.orders)
+                upsert_sales(info.sales)
+            except Exception as e:
+                pass
+
             sales_all_info = self.red.merge_sales(info.all_sales, info.sales)
             sales_all_info.to_excel(f'{MAIN_DIR}{YANDEX_DISC_SALES_FILE_NAME}', index=False)
             upload_file(f'{MAIN_DIR}{YANDEX_DISC_SALES_FILE_NAME}', REMOTE_PATH + YANDEX_DISC_SALES_FILE_NAME)

@@ -21,3 +21,5 @@ BASE_BRAND_NAMES = {
                     'PEPE JEANS LONDON': 'Pepe Jeans',
                     'Van Mich': 'VAN MICH',
 }
+
+DATABASE_URL = os.getenv('DATABASE_URL')

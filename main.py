@@ -11,7 +11,7 @@ from yandex.yandex_main import yandex_main
 def main():
     base_info = base_main()
     lamoda_info = lamoda_main(False)
-    ozon_info = ozon_main(True)
+    ozon_info = ozon_main(False)
     wb_info = wb_main(False)
     yandex_info = yandex_main(False)
 
