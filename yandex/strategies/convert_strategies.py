@@ -3,26 +3,24 @@ from dataclasses import asdict
 from io import BytesIO
 
 import pandas as pd
-import ast
 
 from yandex.config import BASE_ORDERS_COLUMNS_NAME, BASE_COLLECTIONS_COLUMNS_NAME, BASE_RETURNS_COLUMNS_NAME
 from yandex.dto.orders_columns import OrdersColumnsDTO
 from yandex.dto.returned_columns_dto import ReturnedColumnsDTO
+from yandex.utils.corr_helpers import correct_columns_name
 
 
-class ConverterStrategy(ABC):
+class ConvertStrategy(ABC):
     def __init__(self):
         self.orders_columns = OrdersColumnsDTO()
         self.returned_columns = ReturnedColumnsDTO()
-        pass
-
 
     @abstractmethod
-    def converting(self, data, **kwargs) -> pd.DataFrame:
+    def do_convert(self, data, **kwargs) -> pd.DataFrame:
         pass
 
-class ConvYandexOrders(ConverterStrategy):
-    def converting(self, data: dict, **kwargs) -> pd.DataFrame:
+class ConvYandexOrders(ConvertStrategy):
+    def do_convert(self, data: dict, **kwargs) -> pd.DataFrame:
         df = pd.DataFrame(data)
         # 2. Разворачиваем (explode) столбец items — каждый элемент списка становится отдельной строкой
         df_exploded = df.explode('items', ignore_index=True)
@@ -45,12 +43,7 @@ class ConvYandexOrders(ConverterStrategy):
         # Например, чтобы не путать item.id с orderId
         result_df = result_df.rename(columns={'id': 'item_id', 'offerId': 'offer_id', 'offerName': 'offer_name'})
 
-        columns_name = [column for column in result_df.columns if column in BASE_ORDERS_COLUMNS_NAME]
-
-        columns_rename = {k: BASE_ORDERS_COLUMNS_NAME.get(k) for k in columns_name}
-        result_df.rename(columns_rename,
-                                  inplace=True,
-                                  axis=1)
+        result_df = correct_columns_name(result_df, BASE_ORDERS_COLUMNS_NAME)
 
         result_df_without_unnecessary_columns = result_df[[col for col in asdict(self.orders_columns).values() if col in result_df.columns]].copy()
 
@@ -73,8 +66,8 @@ class ConvYandexOrders(ConverterStrategy):
 
         return result_df_without_unnecessary_columns
 
-class ConvYandexReturns(ConverterStrategy):
-    def converting(self, data: dict, **kwargs) -> pd.DataFrame:
+class ConvYandexReturns(ConvertStrategy):
+    def do_convert(self, data: dict, **kwargs) -> pd.DataFrame:
         df = pd.DataFrame(data)
 
         # 2. Разворачиваем (explode) столбец items — каждый элемент списка становится отдельной строкой
@@ -129,17 +122,12 @@ class ConvYandexReturns(ConverterStrategy):
         result_df_without_unnecessary_columns = result_df_without_unnecessary_columns.iloc[:, [i for i in range(len(cols)) if i != dup_positions[1]]]
         return result_df_without_unnecessary_columns
 
-class ConvMEDCollections(ConverterStrategy):
-    def converting(self, data, **kwargs) -> pd.DataFrame:
+class ConvMEDCollections(ConvertStrategy):
+    def do_convert(self, data, **kwargs) -> pd.DataFrame:
         """Преобразует данные о коллекциях на меде в DataFrame"""
         med_collections_df = pd.read_excel(BytesIO(data.content))
 
-        columns_name = [column for column in med_collections_df.columns if column in BASE_COLLECTIONS_COLUMNS_NAME]
-
-        columns_rename = {k: BASE_COLLECTIONS_COLUMNS_NAME.get(k) for k in columns_name}
-        med_collections_df.rename(columns_rename,
-                  inplace=True,
-                  axis=1)
+        med_collections_df = correct_columns_name(med_collections_df, BASE_COLLECTIONS_COLUMNS_NAME)
 
         med_collections_df_without_unnecessary_columns = med_collections_df[[self.orders_columns.offer_id,
                                                                              self.orders_columns.brand,]]

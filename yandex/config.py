@@ -1,13 +1,11 @@
 import os
+from enum import StrEnum
 
 from dotenv import load_dotenv
 
 from yandex.dto.orders_columns import OrdersColumnsDTO
 from yandex.dto.orders_main_info_dto import OrdersMainInfoColumnsDTO
 from yandex.dto.returned_columns_dto import ReturnedColumnsDTO
-
-# from yandex.dto.main_columns_dto import YandexColumnsDTO
-# from utils.path_helper import get_desktop_path
 
 load_dotenv()
 orders_columns = OrdersColumnsDTO()
@@ -20,15 +18,24 @@ PURCHASE_PASSWORD = os.getenv('PURCHASE_PASSWORD')
 
 API_KEY_YANDEX = os.getenv('YANDEX_API_KEY')
 
-BASE_URLS = {
-    'med_collections_1': 'https://med-online.ru/upload/acrit.exportproplus/file.OZON.xlsx?1740656479',
-    'med_collections_2': 'https://med-online.ru/upload/acrit.exportproplus/file.OZONdop.xlsx?1744707024',
-    'med_collections_3': 'https://med-online.ru/upload/acrit.exportproplus/file.match-bikk.xlsx?1769676747',
-    'med_collections_4': 'https://med-online.ru/upload/acrit.exportproplus/file.Strell-Truss-Redp.xlsx?1772624157',
-    'med_purchase': 'https://med-online.ru/upload/1cdata/cost.csv',
-    'med_prices': 'https://med-online.ru/upload/acrit.exportproplus/file.prices.csv?1755164681',
-    'http': '',
-    'yandex': 'https://api.partner.market.yandex.ru',
+class YandexUrlKey(StrEnum):
+    YANDEX = 'yandex'
+
+class MedUrlKey(StrEnum):
+    MED_COLLECTIONS_1 = 'med_collections_1'
+    MED_COLLECTIONS_2 = 'med_collections_2'
+    MED_COLLECTIONS_3 = 'med_collections_3'
+    MED_COLLECTIONS_4 = 'med_collections_4'
+
+YANDEX_BASE_URLS: dict[YandexUrlKey, str] = {
+    YandexUrlKey.YANDEX: 'https://api.partner.market.yandex.ru'
+}
+
+MED_BASE_URLS: dict[MedUrlKey, str] = {
+    MedUrlKey.MED_COLLECTIONS_1: 'https://med-online.ru/upload/acrit.exportproplus/file.OZON.xlsx?1740656479',
+    MedUrlKey.MED_COLLECTIONS_2: 'https://med-online.ru/upload/acrit.exportproplus/file.OZONdop.xlsx?1744707024',
+    MedUrlKey.MED_COLLECTIONS_3: 'https://med-online.ru/upload/acrit.exportproplus/file.match-bikk.xlsx?1769676747',
+    MedUrlKey.MED_COLLECTIONS_4: 'https://med-online.ru/upload/acrit.exportproplus/file.Strell-Truss-Redp.xlsx?1772624157',
 }
 
 BASE_ORDERS_COLUMNS_NAME = {
@@ -94,4 +101,7 @@ LIMIT_RETURNS = 50
 TIME_SLEEP_REPORT = 30
 
 SEX_ATTRIBUTE_ID=14805991
+
+RETRYABLE_STATUS_CODES = (429, 500, 502, 503, 504)
+MAX_WAIT_SECONDS = 10
 

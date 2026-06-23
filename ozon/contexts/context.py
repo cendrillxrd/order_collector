@@ -40,16 +40,16 @@ class ContextHTTP(BaseContext[RequestStrategy]):
             client = HttpClient()
         return self._require_strategy().do_request(client, **kwargs)
 
-class ContextCorrect(BaseContext[CorrectStrategy]):
+class ContextOZONCorrect(BaseContext[CorrectStrategy]):
     def correct_info(self, df: pd.DataFrame, **kwargs) -> pd.DataFrame:
         return self._require_strategy().do_correct(df, **kwargs)
 
 
-class ContextMerge(BaseContext[MergeStrategy]):
+class ContextOZONMerge(BaseContext[MergeStrategy]):
     def merge_info(self, df1: pd.DataFrame, df2: pd.DataFrame, **kwargs) -> pd.DataFrame:
         return self._require_strategy().do_merge(df1, df2, **kwargs)
 
 
-class ContextConvert(BaseContext[ConvertStrategy]):
+class ContextOZONConvert(BaseContext[ConvertStrategy]):
     def convert_info(self, info: list[dict], **kwargs) -> pd.DataFrame:
         return self._require_strategy().do_convert(info, **kwargs)

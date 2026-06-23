@@ -2,8 +2,8 @@ import logging
 
 import pandas as pd
 
-from ozon.contexts.context import ContextCorrect
-from ozon.contexts.context import ContextMerge
+from ozon.contexts.context import ContextOZONCorrect
+from ozon.contexts.context import ContextOZONMerge
 from ozon.strategies.correct_strategies import CorrOrdersStrategy, CorrReturnsStrategy
 from ozon.strategies.merge_strategies import MergeWithBrandStrategy, \
     MergeOrdersInfoStrategy, MergeReturnsInfoStrategy, MergeOrdersWithReturnsStrategy
@@ -26,8 +26,8 @@ def with_strategies(merge_strategy=None, correct_strategy=None):
 
 class RedactionService:
     def __init__(self):
-        self.merger = ContextMerge()
-        self.corrector = ContextCorrect()
+        self.merger = ContextOZONMerge()
+        self.corrector = ContextOZONCorrect()
 
     @with_strategies(merge_strategy=MergeWithBrandStrategy)
     def merge_with_brand(self, main_df: pd.DataFrame, brand_df: pd.DataFrame) -> pd.DataFrame:

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-import numpy as np
 import pandas as pd
 
 from yandex.config import BASE_MAIN_COLUMNS_NAME
@@ -10,7 +9,7 @@ from yandex.dto.returned_columns_dto import ReturnedColumnsDTO
 from yandex.dto.returns_main_info_columns import ReturnsMainInfoColumnsDTO
 
 
-class CorrectorStrategy(ABC):
+class CorrectStrategy(ABC):
     def __init__(self):
         self.orders_columns = OrdersColumnsDTO()
         self.returns_columns = ReturnedColumnsDTO()
@@ -18,11 +17,11 @@ class CorrectorStrategy(ABC):
         self.returns_main_info_columns = ReturnsMainInfoColumnsDTO()
 
     @abstractmethod
-    def correcting(self, df: pd.DataFrame) -> pd.DataFrame:
+    def do_correct(self, df: pd.DataFrame, **kwargs) -> pd.DataFrame:
         pass
 
-class CorrOrdersStrategy(CorrectorStrategy):
-    def correcting(self, orders: pd.DataFrame) -> pd.DataFrame:
+class CorrOrdersStrategy(CorrectStrategy):
+    def do_correct(self, orders: pd.DataFrame, **kwargs) -> pd.DataFrame:
         orders[self.orders_columns.brand] = orders[self.orders_columns.brand].str.strip()
         orders[self.orders_columns.brand] = orders[self.orders_columns.brand].replace('Marc Cony', 'MARC CONY')
 
@@ -58,8 +57,8 @@ class CorrOrdersStrategy(CorrectorStrategy):
 
         return grouped
 
-class CorrReturnsStrategy(CorrectorStrategy):
-    def correcting(self, returns: pd.DataFrame) -> pd.DataFrame:
+class CorrReturnsStrategy(CorrectStrategy):
+    def do_correct(self, returns: pd.DataFrame, **kwargs) -> pd.DataFrame:
         returns[self.returns_columns.brand] = returns[self.returns_columns.brand].str.strip()
         returns[self.returns_columns.brand] = returns[self.returns_columns.brand].replace('Marc Cony', 'MARC CONY')
 

@@ -4,7 +4,7 @@ from typing import Literal
 import pandas as pd
 
 from logger import setup_logger
-from ozon.contexts.context import ContextConvert
+from ozon.contexts.context import ContextOZONConvert
 from ozon.contexts.context import ContextHTTP
 from ozon.contexts.context import ContextOZONApi
 from ozon.ozon_config import TIME_SLEEP_CARDS_LINK, SCHEMAS, VISIBILITIES
@@ -35,7 +35,7 @@ def with_strategies(client_type: Literal['api', 'http'] | None = None, request_s
 class OzonService:
     def __init__(self):
         self.ozon_api_client = ContextOZONApi()
-        self.converter = ContextConvert()
+        self.converter = ContextOZONConvert()
         self.http_client = ContextHTTP()
         self.orders_columns = OrdersColumnsDTO()
 

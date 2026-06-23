@@ -11,27 +11,27 @@ orders_columns = OrdersColumnsDTO()
 returns_columns = ReturnedColumnsDTO()
 all_agg_info_columns = AllAggInfoColumnsDTO()
 
-class MergeStrategies(ABC):
+class MergeStrategy(ABC):
     @abstractmethod
-    def merge(self, *args) -> pd.DataFrame:
+    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, **kwargs) -> pd.DataFrame:
         pass
 
-class MergeCollections(MergeStrategies):
-    def merge(self, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
+class MergeCollections(MergeStrategy):
+    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, **kwargs) -> pd.DataFrame:
         merged_df = pd.concat([df1, df2], ignore_index=True)
         return merged_df
 
-class MergeYandexCollections(MergeStrategies):
+class MergeYandexCollections(MergeStrategy):
     def __init__(self, merge_on: str = orders_columns.offer_id):
         self.merge_on = merge_on
 
-    def merge(self, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
+    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, **kwargs) -> pd.DataFrame:
         df1[self.merge_on] = df1[self.merge_on].astype(str)
         df2[self.merge_on] = df2[self.merge_on].astype(str)
         merged_df = pd.merge(df1, df2, on=self.merge_on, how='left')
         return merged_df
 
-class MergeOrdersInfoStrategy(MergeStrategies):
+class MergeOrdersInfoStrategy(MergeStrategy):
     def __init__(self, merge_on: tuple = (orders_columns.order_id, orders_columns.offer_id)):
         self.merge_on = merge_on
 
@@ -41,7 +41,7 @@ class MergeOrdersInfoStrategy(MergeStrategies):
         df['_temp_position'] = df.groupby(list(self.merge_on)).cumcount()
         return df
 
-    def merge(self, df1: pd.DataFrame, df2: pd.DataFrame):
+    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, **kwargs):
         df1[orders_columns.order_id] = df1[orders_columns.order_id].astype(str)
         df1[orders_columns.offer_id] = df1[orders_columns.offer_id].astype(str)
         df2[orders_columns.order_id] = df2[orders_columns.order_id].astype(str)
@@ -77,7 +77,7 @@ class MergeOrdersInfoStrategy(MergeStrategies):
 
         return df_updated
 
-class MergeReturnsInfoStrategy(MergeStrategies):
+class MergeReturnsInfoStrategy(MergeStrategy):
     def __init__(self, merge_on: tuple = (returns_columns.order_id, returns_columns.offer_id)):
         self.merge_on = merge_on
 
@@ -87,7 +87,7 @@ class MergeReturnsInfoStrategy(MergeStrategies):
         df['_temp_position'] = df.groupby(list(self.merge_on)).cumcount()
         return df
 
-    def merge(self, df1: pd.DataFrame, df2: pd.DataFrame):
+    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, **kwargs):
         df1[returns_columns.order_id] = df1[returns_columns.order_id].astype(str)
         df1[returns_columns.offer_id] = df1[returns_columns.offer_id].astype(str)
         df2[returns_columns.order_id] = df2[returns_columns.order_id].astype(str)
@@ -123,10 +123,14 @@ class MergeReturnsInfoStrategy(MergeStrategies):
 
         return df_updated
 
-class MergeOrdersWithReturnsStrategy(MergeStrategies):
-    def __init__(self, merge_on = [all_agg_info_columns.market, all_agg_info_columns.year, all_agg_info_columns.month, all_agg_info_columns.week, all_agg_info_columns.brand]):
-        self.merge_on = merge_on
+class MergeOrdersWithReturnsStrategy(MergeStrategy):
+    def __init__(self):
+        self.merge_on = [all_agg_info_columns.market,
+                         all_agg_info_columns.year,
+                         all_agg_info_columns.month,
+                         all_agg_info_columns.week,
+                         all_agg_info_columns.brand]
 
-    def merge(self, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
+    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, *args, **kwargs) -> pd.DataFrame:
         merged = pd.concat([df1, df2]).groupby(self.merge_on, as_index=False).sum()
         return merged

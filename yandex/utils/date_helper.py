@@ -21,7 +21,7 @@ def get_last_week_sunday() -> str:
     last_week_sunday = current_monday - timedelta(days=1)
     return last_week_sunday.strftime('%Y-%m-%d')
 
-def get_date_30_days_after_last_week_end() -> str:
+def get_date_30_days_before_last_week_end() -> str:
     """
     Возвращает дату на 30 дней дальше от даты конца прошлой недели в формате 'YYYY-MM-DD'.
     """
