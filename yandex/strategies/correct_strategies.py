@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 
-from yandex.config import BASE_MAIN_COLUMNS_NAME
+from yandex.yandex_config import BASE_MAIN_COLUMNS_NAME
 from yandex.dto.orders_columns import OrdersColumnsDTO
 from yandex.dto.orders_main_info_dto import OrdersMainInfoColumnsDTO
 from yandex.dto.returned_columns_dto import ReturnedColumnsDTO

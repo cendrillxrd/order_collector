@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from enum import StrEnum
 
 from dotenv import load_dotenv
 
@@ -12,13 +13,26 @@ from lamoda.dto.columns_main_dto import ColumnsMainDTO
 columns_main = ColumnsMainDTO()
 order_columns_main = OrdersMainInfoColumnsDTO()
 
-BASE_URLS = {
-    'live': 'https://api-b2b.lamoda.ru',
-    'b2b': 'https://public-api-seller.lamoda.ru',
-    'med_collections_1': 'https://med-online.ru/upload/acrit.exportproplus/file.OZON.xlsx?1740656479',
-    'med_collections_2': 'https://med-online.ru/upload/acrit.exportproplus/file.OZONdop.xlsx?1744707024',
-    'med_collections_3': 'https://med-online.ru/upload/acrit.exportproplus/file.match-bikk.xlsx?1769676747',
-    'med_collections_4': 'https://med-online.ru/upload/acrit.exportproplus/file.Strell-Truss-Redp.xlsx?1772624157',
+class LamodaUrlKey(StrEnum):
+    LIVE = 'live'
+    B2B = 'b2b'
+
+class MedUrlKey(StrEnum):
+    MED_COLLECTIONS_1 = 'med_collections_1'
+    MED_COLLECTIONS_2 = 'med_collections_2'
+    MED_COLLECTIONS_3 = 'med_collections_3'
+    MED_COLLECTIONS_4 = 'med_collections_4'
+
+BASE_URLS: dict[LamodaUrlKey, str] = {
+    LamodaUrlKey.LIVE: 'https://api-b2b.lamoda.ru',
+    LamodaUrlKey.B2B: 'https://public-api-seller.lamoda.ru',
+}
+
+MED_BASE_URLS: dict[MedUrlKey, str] = {
+    MedUrlKey.MED_COLLECTIONS_1: 'https://med-online.ru/upload/acrit.exportproplus/file.OZON.xlsx?1740656479',
+    MedUrlKey.MED_COLLECTIONS_2: 'https://med-online.ru/upload/acrit.exportproplus/file.OZONdop.xlsx?1744707024',
+    MedUrlKey.MED_COLLECTIONS_3: 'https://med-online.ru/upload/acrit.exportproplus/file.match-bikk.xlsx?1769676747',
+    MedUrlKey.MED_COLLECTIONS_4: 'https://med-online.ru/upload/acrit.exportproplus/file.Strell-Truss-Redp.xlsx?1772624157',
 }
 
 CLIENT_ID = os.getenv('CLIENT_ID')
@@ -27,11 +41,13 @@ CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 CLIENT_ID_SMART_PREMIUM = os.getenv('CLIENT_ID_SMART_PREMIUM')
 CLIENT_SECRET_SMART_PREMIUM = os.getenv('CLIENT_SECRET_SMART_PREMIUM')
 
+RETRYABLE_STATUS_CODES = {429, 500, 502, 503, 504}
+MAX_WAIT_SECONDS = 30
+
 LIMIT_NOMENCLATURE = 25
 LIMIT_STOCK = 25
 LIMIT_ORDER = 25
 TIME_SLEEP_NOMENCLATURES = 0.5
-TIME_SLEEP_STOCK = 0.5
 TIME_SLEEP_ORDER = 0.5
 TIME_SLEEP_ORDER_INFO = 0.2
 
@@ -57,7 +73,6 @@ BASE_COLUMNS_NAME = {'id': columns_main.id,
                      'shopName': columns_main.shop_name,
                      'size': columns_main.size,
                      'description': columns_main.description,
-                     # 'Артикул': columns_main.supplier_parent_sku,
                      }
 
 ON_THE_WAY_SHIP_STATUS = ['Arrived to LME',
@@ -111,3 +126,5 @@ YANDEX_DISC_LAMODA_SP_FILE_NAME = '/Заказы LAMODA SP.xlsx'
 YANDEX_DISC_LAMODA_FILE_NAME = '/Заказы LAMODA.xlsx'
 LOCAL_LAMODA_SP_PATH = f'.{YANDEX_DISC_LAMODA_SP_FILE_NAME}'
 LOCAL_LAMODA_PATH = f'.{YANDEX_DISC_LAMODA_FILE_NAME}'
+
+MARKET_NAME = 'LAMODA'

@@ -1,7 +1,7 @@
 import pandas as pd
 from functools import reduce
 from config import MAIN_DIR, REMOTE_PATH
-from yandex.config import YANDEX_DISC_RETURNS_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_RETURNS_PATH, LOCAL_ORDERS_PATH
+from yandex.yandex_config import YANDEX_DISC_RETURNS_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_RETURNS_PATH, LOCAL_ORDERS_PATH
 from yandex.dto.info_yandex_dto import InfoYandexDTO
 from yandex.dto.orders_columns import OrdersColumnsDTO
 from yandex.repositories.db_repository import upsert_yandex_orders, upsert_yandex_returns

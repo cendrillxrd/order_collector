@@ -1,7 +1,7 @@
 import pandas as pd
 
 from logger import setup_logger
-from yandex.config import MedUrlKey
+from yandex.yandex_config import MedUrlKey
 from yandex.contexts.context import ContextMedApi, ContextYandexConvert
 from yandex.strategies.requests_strategies import ReqMEDCollections
 from yandex.strategies.convert_strategies import ConvMEDCollections

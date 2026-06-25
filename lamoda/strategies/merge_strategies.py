@@ -10,21 +10,12 @@ columns_main = ColumnsMainDTO()
 all_agg_info_columns = AllAggInfoColumnsDTO()
 
 
-class MergeStrategies(ABC):
+class MergeStrategy(ABC):
     @abstractmethod
     def merge(self, *args) -> pd.DataFrame:
         pass
 
-# class MergeCollections(MergeStrategies):
-#     def __init__(self, merge_on: str = columns_main.supplier_parent_sku):
-#         self.merge_on = merge_on
-#
-#     def merge(self, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
-#         merged_df = pd.concat([df1, df2], ignore_index=True)
-#         return merged_df
-
-
-class MergeOrders(MergeStrategies):
+class MergeOrders(MergeStrategy):
     def __init__(self, merge_on: tuple = (columns_main.id, columns_main.sku)):
         self.merge_on = merge_on
 
@@ -61,7 +52,7 @@ class MergeOrders(MergeStrategies):
         return result
 
 
-class MergeOrdersBrand(MergeStrategies):
+class MergeOrdersBrand(MergeStrategy):
     def __init__(self, merge_on: str = columns_main.sku):
         self.merge_on = merge_on
 
@@ -69,10 +60,10 @@ class MergeOrdersBrand(MergeStrategies):
         merged = pd.merge(df1, df2, on=columns_main.sku, how='left')
         return merged
 
-class MergeOrdersWithReturnsStrategy(MergeStrategies):
-    def __init__(self, merge_on=[all_agg_info_columns.market, all_agg_info_columns.year, all_agg_info_columns.month,
-                                 all_agg_info_columns.week, all_agg_info_columns.brand]):
-        self.merge_on = merge_on
+class MergeOrdersWithReturnsStrategy(MergeStrategy):
+    def __init__(self):
+        self.merge_on = [all_agg_info_columns.market, all_agg_info_columns.year, all_agg_info_columns.month,
+                         all_agg_info_columns.week, all_agg_info_columns.brand]
 
     def merge(self, df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
         merged = pd.concat([df1, df2]).groupby(self.merge_on, as_index=False).sum()

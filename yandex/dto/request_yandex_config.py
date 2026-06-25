@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Literal, Optional, Dict, Any
 
-from yandex.config import YandexUrlKey, MedUrlKey
+from yandex.yandex_config import YandexUrlKey, MedUrlKey
 
 
 @dataclass

@@ -2,8 +2,8 @@ import pandas as pd
 
 from config import MAIN_DIR, REMOTE_PATH
 from logger import setup_logger
-from yandex.config import LOCAL_RETURNS_PATH, LOCAL_ORDERS_PATH
-from yandex.config import YANDEX_DISC_RETURNS_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME
+from yandex.yandex_config import LOCAL_RETURNS_PATH, LOCAL_ORDERS_PATH
+from yandex.yandex_config import YANDEX_DISC_RETURNS_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME
 from yandex.dto.info_yandex_dto import InfoYandexDTO
 from yandex.services.med_service import MedService
 # from dto.main_columns_dto import YandexColumnsDTO

@@ -8,22 +8,21 @@ from lamoda.lamoda_config import YANDEX_DISC_LAMODA_FILE_NAME, LOCAL_LAMODA_PATH
     LOCAL_LAMODA_SP_PATH
 from lamoda.dto.columns_main_dto import ColumnsMainDTO
 from lamoda.dto.info_dto import InfoDTO
-from lamoda.service.api_service import APIService, MedService
+from lamoda.service.api_service import APIService
 from lamoda.utils.date_helper import get_dates_for_request_by_month
 from yandex_disk import download_file
 
 
 class InfoCollector:
-    def __init__(self, market_type: str = Literal['ufo', 'smart_premium']):
+    def __init__(self, market_type: type[str] = Literal['ufo', 'smart_premium']):
         self.market_type = market_type
         self.api_key = ApiKeyManager(market_type)
         self.api = APIService(self.api_key)
-        self.med = MedService()
         self.columns_main = ColumnsMainDTO()
 
     def collect_info(self) -> InfoDTO:
-        # start_date = '2026-04-27'
-        # end_date = '2026-05-03'
+        # start_date = '2026-06-10'
+        # end_date = '2026-06-10'
         start_date, end_date = get_dates_for_request_by_month()
 
         orders_month = self.api.get_orders_info_by_products(start_date=start_date, end_date=end_date)

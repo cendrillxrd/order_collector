@@ -3,31 +3,32 @@ from dataclasses import asdict
 
 import pandas as pd
 
-from lamoda.lamoda_config import BASE_MAIN_COLUMNS_NAME
+from lamoda.lamoda_config import BASE_MAIN_COLUMNS_NAME, MARKET_NAME
 from lamoda.dto.columns_main_dto import ColumnsMainDTO
 from lamoda.dto.orders_main_info_dto import OrdersMainInfoColumnsDTO
 from lamoda.dto.returns_main_info_columns import ReturnsMainInfoColumnsDTO
 from lamoda.utils.date_helper import filter_until_last_sunday
+from lamoda.utils.save_helper import correct_columns_name
 
 
-class CorrectorStrategy(ABC):
+class CorrectStrategy(ABC):
     def __init__(self):
         self.orders_columns = ColumnsMainDTO()
         self.returns_main_info_columns = ReturnsMainInfoColumnsDTO()
         self.orders_main_info_columns = OrdersMainInfoColumnsDTO()
 
     @abstractmethod
-    def correcting(self, df: pd.DataFrame, **kwargs) -> pd.DataFrame:
+    def do_correct(self, df: pd.DataFrame, **kwargs) -> pd.DataFrame:
         pass
-class CorrOrdersStrategy(CorrectorStrategy):
-    def correcting(self, orders: pd.DataFrame, **kwargs) -> pd.DataFrame:
+
+class CorrOrdersStrategy(CorrectStrategy):
+    def do_correct(self, orders: pd.DataFrame, **kwargs) -> pd.DataFrame:
         orders[self.orders_columns.brand] = orders[self.orders_columns.brand].str.strip()
-        orders[self.orders_columns.brand] = orders[self.orders_columns.brand].replace('Marc Cony', 'MARC CONY')
 
         orders[self.orders_columns.created_at] = pd.to_datetime(orders[self.orders_columns.created_at])
 
         # # 2. Создаём колонки: год, месяц, номер недели
-        orders[self.orders_main_info_columns.market] = 'LAMODA'
+        orders[self.orders_main_info_columns.market] = MARKET_NAME
         orders[self.orders_main_info_columns.year] = orders[self.orders_columns.created_at].dt.year
         orders[self.orders_main_info_columns.month] = orders[self.orders_columns.created_at].dt.month
         orders[self.orders_main_info_columns.week] = orders[self.orders_columns.created_at].dt.isocalendar().week
@@ -49,24 +50,18 @@ class CorrOrdersStrategy(CorrectorStrategy):
             returned_sum=('canceled_price', 'sum'),
         ).reset_index()
 
-        columns_name = [column for column in grouped.columns if column in BASE_MAIN_COLUMNS_NAME]
-
-        columns_rename = {k: BASE_MAIN_COLUMNS_NAME.get(k) for k in columns_name}
-        grouped.rename(columns_rename,
-                  inplace=True,
-                  axis=1)
+        grouped = correct_columns_name(grouped, BASE_MAIN_COLUMNS_NAME)
         return grouped
 
-class CorrReturnsStrategy(CorrectorStrategy):
-    def correcting(self, returns: pd.DataFrame, **kwargs) -> pd.DataFrame:
+class CorrReturnsStrategy(CorrectStrategy):
+    def do_correct(self, returns: pd.DataFrame, **kwargs) -> pd.DataFrame:
         returns[self.orders_columns.brand] = returns[self.orders_columns.brand].str.strip()
-        returns[self.orders_columns.brand] = returns[self.orders_columns.brand].replace('Marc Cony', 'MARC CONY')
 
         returns[self.orders_columns.updated_at] = pd.to_datetime(returns[self.orders_columns.updated_at])
         returns = filter_until_last_sunday(returns, self.orders_columns.updated_at)
 
         # 2. Создаём колонки: год, месяц, номер недели
-        returns[self.returns_main_info_columns.market] = 'LAMODA'
+        returns[self.returns_main_info_columns.market] = MARKET_NAME
         returns[self.returns_main_info_columns.year] = returns[self.orders_columns.updated_at].dt.year
         returns[self.returns_main_info_columns.month] = returns[self.orders_columns.updated_at].dt.month
         returns[self.returns_main_info_columns.week] = returns[self.orders_columns.updated_at].dt.isocalendar().week
@@ -84,17 +79,11 @@ class CorrReturnsStrategy(CorrectorStrategy):
             returned_sum=('canceled_price', 'sum'),
         ).reset_index()
 
-        columns_name = [column for column in grouped.columns if column in BASE_MAIN_COLUMNS_NAME]
-
-        columns_rename = {k: BASE_MAIN_COLUMNS_NAME.get(k) for k in columns_name}
-        grouped.rename(columns_rename,
-                  inplace=True,
-                  axis=1)
-
+        grouped = correct_columns_name(grouped, BASE_MAIN_COLUMNS_NAME)
         return grouped
 
-class CorrBrandOrders(CorrectorStrategy):
-    def correcting(self, df: pd.DataFrame, **kwargs) -> pd.DataFrame:
+class CorrBrandOrders(CorrectStrategy):
+    def do_correct(self, df: pd.DataFrame, **kwargs) -> pd.DataFrame:
         columns_to_int = [
                           self.orders_columns.total_discount,
                           self.orders_columns.sale_price,

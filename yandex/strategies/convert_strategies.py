@@ -4,7 +4,7 @@ from io import BytesIO
 
 import pandas as pd
 
-from yandex.config import BASE_ORDERS_COLUMNS_NAME, BASE_COLLECTIONS_COLUMNS_NAME, BASE_RETURNS_COLUMNS_NAME
+from yandex.yandex_config import BASE_ORDERS_COLUMNS_NAME, BASE_COLLECTIONS_COLUMNS_NAME, BASE_RETURNS_COLUMNS_NAME
 from yandex.dto.orders_columns import OrdersColumnsDTO
 from yandex.dto.returned_columns_dto import ReturnedColumnsDTO
 from yandex.utils.corr_helpers import correct_columns_name

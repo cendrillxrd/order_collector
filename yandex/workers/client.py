@@ -5,7 +5,7 @@ from typing import Union, Dict
 import requests
 
 from logger import setup_logger
-from yandex.config import API_KEY_YANDEX, RETRYABLE_STATUS_CODES, MAX_WAIT_SECONDS, YANDEX_BASE_URLS, \
+from yandex.yandex_config import API_KEY_YANDEX, RETRYABLE_STATUS_CODES, MAX_WAIT_SECONDS, YANDEX_BASE_URLS, \
     MED_BASE_URLS
 from yandex.dto.request_yandex_config import RequestYandexConfig
 

@@ -33,11 +33,6 @@ def is_csv_empty(file_path: str) -> bool:
     return df.empty
 
 
-def correct_columns_name(df: pd.DataFrame) -> pd.DataFrame:
-    columns_name = [column for column in df.columns if column in BASE_COLUMNS_NAME]
-
-    columns_rename = {k: BASE_COLUMNS_NAME.get(k) for k in columns_name}
-    df.rename(columns_rename,
-              inplace=True,
-              axis=1)
-    return df
+def correct_columns_name(df: pd.DataFrame, base_columns_name: dict) -> pd.DataFrame:
+    columns_rename = {k: v for k, v in base_columns_name.items() if k in df.columns}
+    return df.rename(columns=columns_rename)

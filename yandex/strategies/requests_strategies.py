@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 import requests
 
 from logger import setup_logger
-from yandex.config import (LIMIT_CARDS_INFO, LIMIT_ORDERS, LIMIT_PUBLISHED_CARDS,
-                           PURCHASE_LOGIN, PURCHASE_PASSWORD, TIME_SLEEP_CARDS_INFO,
-                           TIME_SLEEP_ORDERS, TIME_SLEEP_PUBLISHED_CARDS, LIMIT_RETURNS, YandexUrlKey, MedUrlKey)
+from yandex.yandex_config import (LIMIT_CARDS_INFO, LIMIT_ORDERS, LIMIT_PUBLISHED_CARDS,
+                                  PURCHASE_LOGIN, PURCHASE_PASSWORD, TIME_SLEEP_CARDS_INFO,
+                                  TIME_SLEEP_ORDERS, TIME_SLEEP_PUBLISHED_CARDS, LIMIT_RETURNS, YandexUrlKey, MedUrlKey)
 from yandex.dto.request_yandex_config import RequestYandexConfig
 from yandex.utils.date_helper import get_date_30_days_before_last_week_end, get_current_week_monday
 from yandex.workers.client import Client, YandexAPIClient, MedClient
