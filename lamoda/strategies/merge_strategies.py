@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 
-from lamoda.config import ON_THE_WAY_GOODS_SHIPS_STATUS, ON_THE_WAY_SHIP_STATUS
+from lamoda.lamoda_config import ON_THE_WAY_GOODS_SHIPS_STATUS, ON_THE_WAY_SHIP_STATUS
 from lamoda.dto.all_agg_info_dto import AllAggInfoColumnsDTO
 from lamoda.dto.columns_main_dto import ColumnsMainDTO
 

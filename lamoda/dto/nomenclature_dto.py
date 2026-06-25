@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass, field
 
-from lamoda.config import LIMIT_NOMENCLATURE
+from lamoda.lamoda_config import LIMIT_NOMENCLATURE
 
 
 @dataclass

@@ -4,7 +4,7 @@ from urllib3.util.retry import Retry
 import requests
 import urllib3
 from requests.adapters import HTTPAdapter
-from lamoda.config import BASE_URLS, CLIENT_ID, CLIENT_SECRET, CLIENT_ID_SMART_PREMIUM, CLIENT_SECRET_SMART_PREMIUM
+from lamoda.lamoda_config import BASE_URLS, CLIENT_ID, CLIENT_SECRET, CLIENT_ID_SMART_PREMIUM, CLIENT_SECRET_SMART_PREMIUM
 from lamoda.strategies.request_strategies import RequestStrategy
 
 

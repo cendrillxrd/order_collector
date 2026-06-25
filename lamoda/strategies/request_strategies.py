@@ -2,8 +2,8 @@ import time
 from abc import ABC, abstractmethod
 from dataclasses import asdict
 
-from lamoda.config import (TIME_SLEEP_ORDER,
-                           TIME_SLEEP_ORDER_INFO, TIME_SLEEP_NOMENCLATURES, )
+from lamoda.lamoda_config import (TIME_SLEEP_ORDER,
+                                  TIME_SLEEP_ORDER_INFO, TIME_SLEEP_NOMENCLATURES, )
 from lamoda.dto.nomenclature_dto import NomenclatureDTO
 from lamoda.dto.order_dto import OrderDTO
 from lamoda.utils.create_id_helper import generate_uuid_id

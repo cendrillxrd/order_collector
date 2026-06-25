@@ -3,7 +3,7 @@ from dataclasses import asdict
 
 import pandas as pd
 
-from lamoda.config import BASE_MAIN_COLUMNS_NAME
+from lamoda.lamoda_config import BASE_MAIN_COLUMNS_NAME
 from lamoda.dto.columns_main_dto import ColumnsMainDTO
 from lamoda.dto.orders_main_info_dto import OrdersMainInfoColumnsDTO
 from lamoda.dto.returns_main_info_columns import ReturnsMainInfoColumnsDTO

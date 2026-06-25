@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pandas as pd
 
-from lamoda.config import (BASE_COLUMNS_NAME, FILE_PATH, NOMENCLATURE_DAY_FILE_NAME,
-                    ORDERS_FILE_NAME)
+from lamoda.lamoda_config import (BASE_COLUMNS_NAME, FILE_PATH, NOMENCLATURE_DAY_FILE_NAME,
+                                  ORDERS_FILE_NAME)
 
 
 def save_info(info):

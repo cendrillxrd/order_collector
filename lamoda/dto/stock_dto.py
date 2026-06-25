@@ -1,6 +1,6 @@
 from dataclasses import asdict, dataclass
 
-from lamoda.config import LIMIT_STOCK
+from lamoda.lamoda_config import LIMIT_STOCK
 
 
 @dataclass

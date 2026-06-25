@@ -4,7 +4,7 @@ from typing import Union
 
 import pandas as pd
 
-from lamoda.config import BASE_COLUMNS_NAME
+from lamoda.lamoda_config import BASE_COLUMNS_NAME
 from lamoda.dto.columns_main_dto import ColumnsMainDTO
 from lamoda.utils.save_helper import correct_columns_name
 

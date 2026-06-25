@@ -2,7 +2,7 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from typing import Literal
 
-from lamoda.config import LIMIT_ORDER
+from lamoda.lamoda_config import LIMIT_ORDER
 from lamoda.utils.date_helper import (get_date_range_filter, parse_date_string)
 
 

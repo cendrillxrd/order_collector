@@ -4,7 +4,7 @@ import pandas as pd
 
 from config import MAIN_DIR, REMOTE_PATH
 from lamoda.api_key import ApiKeyManager
-from lamoda.config import YANDEX_DISC_LAMODA_FILE_NAME, LOCAL_LAMODA_PATH, YANDEX_DISC_LAMODA_SP_FILE_NAME, \
+from lamoda.lamoda_config import YANDEX_DISC_LAMODA_FILE_NAME, LOCAL_LAMODA_PATH, YANDEX_DISC_LAMODA_SP_FILE_NAME, \
     LOCAL_LAMODA_SP_PATH
 from lamoda.dto.columns_main_dto import ColumnsMainDTO
 from lamoda.dto.info_dto import InfoDTO
