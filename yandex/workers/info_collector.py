@@ -21,21 +21,16 @@ class InfoCollector:
         self.med = MedService()
 
     def collect_info(self) -> InfoYandexDTO:
-        download_file(REMOTE_PATH + YANDEX_DISC_RETURNS_FILE_NAME, LOCAL_RETURNS_PATH)
-        download_file(REMOTE_PATH + YANDEX_DISC_ORDERS_FILE_NAME, LOCAL_ORDERS_PATH)
+        date_from, date_to = '2026-06-01','2026-06-07'
+        # date_from = get_date_30_days_before_last_week_end()
+        # date_to = get_last_week_sunday()
 
-        date_from = get_date_30_days_before_last_week_end()
-        date_to = get_last_week_sunday()
         returns = self.yandex.get_returns(date_from=date_from, date_to=date_to)
-        all_returns = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_RETURNS_FILE_NAME}')
         orders = self.yandex.get_orders()
-        all_orders = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_ORDERS_FILE_NAME}')
         med_collections = self.med.get_med_collections()
 
         return InfoYandexDTO(
             orders=orders,
             returns=returns,
-            all_orders=all_orders,
-            all_returns=all_returns,
             med_collections=med_collections
         )

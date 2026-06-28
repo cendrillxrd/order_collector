@@ -106,6 +106,25 @@ def upsert_ozon_returns(df: pd.DataFrame) -> None:
 
     logger.info(f"Ozon returns: записано/обновлено {len(records)} строк в БД")
 
+OZON_ORDERS_COLUMN_MAP_INV  = {v: k for k, v in OZON_ORDERS_COLUMN_MAP.items()}
+OZON_RETURNS_COLUMN_MAP_INV = {v: k for k, v in OZON_RETURNS_COLUMN_MAP.items()}
+
+def read_ozon_orders() -> pd.DataFrame:
+    with engine.connect() as conn:
+        df = pd.read_sql(text("SELECT * FROM ozon_orders"), conn)
+    df = df.rename(columns=OZON_ORDERS_COLUMN_MAP_INV)
+    df = df[[c for c in OZON_ORDERS_COLUMN_MAP_INV.values() if c in df.columns]]
+    logger.info(f"Ozon orders: прочитано {len(df)} строк из БД")
+    return df
+
+def read_ozon_returns() -> pd.DataFrame:
+    with engine.connect() as conn:
+        df = pd.read_sql(text("SELECT * FROM ozon_returns"), conn)
+    df = df.rename(columns=OZON_RETURNS_COLUMN_MAP_INV)
+    df = df[[c for c in OZON_RETURNS_COLUMN_MAP_INV.values() if c in df.columns]]
+    logger.info(f"Ozon returns: прочитано {len(df)} строк из БД")
+    return df
+
 def _clean_value(col_name: str, value):
     if value is None or (isinstance(value, float) and np.isnan(value)) or pd.isna(value):
         return None

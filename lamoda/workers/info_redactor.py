@@ -6,7 +6,7 @@ from lamoda.lamoda_config import (YANDEX_DISC_LAMODA_FILE_NAME, LOCAL_LAMODA_PAT
                                   LOCAL_LAMODA_SP_PATH)
 from lamoda.dto.columns_main_dto import ColumnsMainDTO
 from lamoda.dto.info_dto import InfoDTO
-from lamoda.repositories.db_repository import upsert_lamoda_orders
+from lamoda.repositories.db_repository import upsert_lamoda_orders, read_lamoda_orders
 from lamoda.service.redaction import RedactionService
 from yandex_disk import download_file, upload_file
 
@@ -20,39 +20,17 @@ class InfoRedactor:
     def redact_info(self, info: InfoDTO, get_new_info: bool = False) -> pd.DataFrame:
         if get_new_info:
             orders_with_brand = self.red.merge_orders_with_brand(info.orders_month, info.nomenclature)
-            orders_all_info = self.red.merge_orders_info(info.all_orders, orders_with_brand)
-
             upsert_lamoda_orders(orders_with_brand, self.market_type)
 
-            if self.market_type == 'ufo':
-                orders_all_info.to_excel(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_FILE_NAME}', index=False)
-                upload_file(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_FILE_NAME}', REMOTE_PATH + YANDEX_DISC_LAMODA_FILE_NAME)
-            elif self.market_type == 'smart_premium':
-                orders_all_info.to_excel(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_SP_FILE_NAME}', index=False)
-                upload_file(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_SP_FILE_NAME}', REMOTE_PATH + YANDEX_DISC_LAMODA_SP_FILE_NAME)
-            else:
-                raise ValueError('market_type must be ufo or smart_premium')
-            orders_main_info = self.red.orders_main_info(orders_all_info)
+        orders_all_info = read_lamoda_orders(self.market_type)
 
-            returns_main_info = self.red.returns_main_info(orders_all_info)
+        if get_new_info:
+            file_name = YANDEX_DISC_LAMODA_FILE_NAME if self.market_type == 'ufo' else YANDEX_DISC_LAMODA_SP_FILE_NAME
+            orders_all_info.to_excel(f'{MAIN_DIR}{file_name}', index=False)
+            upload_file(f'{MAIN_DIR}{file_name}', REMOTE_PATH + file_name)
 
-            agg_table = self.red.merge_main_info(orders_main_info, returns_main_info)
+        orders_main_info = self.red.orders_main_info(orders_all_info)
+        returns_main_info = self.red.returns_main_info(orders_all_info)
 
-            return agg_table
-        else:
-            if self.market_type == 'ufo':
-                download_file(REMOTE_PATH + YANDEX_DISC_LAMODA_FILE_NAME, LOCAL_LAMODA_PATH)
-                orders_all_info = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_FILE_NAME}')
-            elif self.market_type == 'smart_premium':
-                download_file(REMOTE_PATH + YANDEX_DISC_LAMODA_SP_FILE_NAME, LOCAL_LAMODA_SP_PATH)
-                orders_all_info = pd.read_excel(f'{MAIN_DIR}{YANDEX_DISC_LAMODA_SP_FILE_NAME}')
-            else:
-                raise ValueError('market_type must be ufo or smart_premium')
-
-            orders_main_info = self.red.orders_main_info(orders_all_info)
-
-            returns_main_info = self.red.returns_main_info(orders_all_info)
-
-            agg_table = self.red.merge_main_info(orders_main_info, returns_main_info)
-
-            return agg_table
+        agg_table = self.red.merge_main_info(orders_main_info, returns_main_info)
+        return agg_table

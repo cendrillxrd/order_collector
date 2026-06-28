@@ -56,6 +56,24 @@ def _clean_records(df: pd.DataFrame) -> list[dict]:
         for row in df.to_dict(orient='records')
     ]
 
+YANDEX_ORDERS_COLUMN_MAP_INV  = {v: k for k, v in YANDEX_ORDERS_COLUMN_MAP.items()}
+YANDEX_RETURNS_COLUMN_MAP_INV = {v: k for k, v in YANDEX_RETURNS_COLUMN_MAP.items()}
+
+def read_yandex_orders() -> pd.DataFrame:
+    with engine.connect() as conn:
+        df = pd.read_sql(text("SELECT * FROM yandex_orders"), conn)
+    df = df.rename(columns=YANDEX_ORDERS_COLUMN_MAP_INV)
+    df = df[[c for c in YANDEX_ORDERS_COLUMN_MAP_INV.values() if c in df.columns]]
+    logger.info(f"Yandex orders: прочитано {len(df)} строк из БД")
+    return df
+
+def read_yandex_returns() -> pd.DataFrame:
+    with engine.connect() as conn:
+        df = pd.read_sql(text("SELECT * FROM yandex_returns"), conn)
+    df = df.rename(columns=YANDEX_RETURNS_COLUMN_MAP_INV)
+    df = df[[c for c in YANDEX_RETURNS_COLUMN_MAP_INV.values() if c in df.columns]]
+    logger.info(f"Yandex returns: прочитано {len(df)} строк из БД")
+    return df
 
 def upsert_yandex_orders(df: pd.DataFrame) -> None:
     if df is None or df.empty:

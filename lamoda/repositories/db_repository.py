@@ -1,3 +1,5 @@
+from typing import Literal
+
 import numpy as np
 import pandas as pd
 from sqlalchemy import text
@@ -50,17 +52,38 @@ def _clean_records(df: pd.DataFrame) -> list[dict]:
         for row in df.to_dict(orient='records')
     ]
 
+LAMODA_ORDERS_COLUMN_MAP_INV = {v: k for k, v in LAMODA_ORDERS_COLUMN_MAP.items()}
 
-def upsert_lamoda_orders(df: pd.DataFrame, market_type: str) -> None:
+def read_lamoda_orders(market_type: type[str] = Literal['ufo', 'smart_premium']) -> pd.DataFrame:
+    with engine.connect() as conn:
+        df = pd.read_sql(
+            text("SELECT * FROM lamoda_orders WHERE market_type = :mt"),
+            conn,
+            params={'mt': market_type}
+        )
+    df = df.rename(columns=LAMODA_ORDERS_COLUMN_MAP_INV)
+    df = df[[c for c in LAMODA_ORDERS_COLUMN_MAP_INV.values() if c in df.columns]]
+    logger.info(f"Lamoda [{market_type}] orders: прочитано {len(df)} строк из БД")
+    return df
+
+def upsert_lamoda_orders(df: pd.DataFrame, market_type: type[str] = Literal['ufo', 'smart_premium']) -> None:
     if df is None or df.empty:
         logger.info(f"Нет новых заказов Lamoda [{market_type}] для записи в БД")
         return
+
+    # Сохраняем position ДО rename и фильтрации
+    position = df['position'].copy() if 'position' in df.columns else None
 
     df = df.rename(columns=LAMODA_ORDERS_COLUMN_MAP)
     df = df[[c for c in LAMODA_ORDERS_COLUMN_MAP.values() if c in df.columns]]
     df = df.copy()
     df['market_type'] = market_type
-    df['position'] = df.groupby(['order_id', 'sku']).cumcount()
+
+    if position is not None:
+        df['position'] = position.values
+    else:
+        df['position'] = df.groupby(['order_id', 'sku']).cumcount()
+
     records = _clean_records(df)
 
     columns = list(df.columns)

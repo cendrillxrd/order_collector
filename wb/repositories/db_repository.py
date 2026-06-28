@@ -108,6 +108,24 @@ def upsert_sales(df: pd.DataFrame) -> None:
 
     logger.info(f"WB sales: записано/обновлено {len(records)} строк в БД")
 
+ORDERS_COLUMN_MAP_INV = {v: k for k, v in ORDERS_COLUMN_MAP.items()}
+SALES_COLUMN_MAP_INV  = {v: k for k, v in SALES_COLUMN_MAP.items()}
+
+def read_orders() -> pd.DataFrame:
+    with engine.connect() as conn:
+        df = pd.read_sql(text("SELECT * FROM wb_orders"), conn)
+    df = df.rename(columns=ORDERS_COLUMN_MAP_INV)
+    df = df[[c for c in ORDERS_COLUMN_MAP_INV.values() if c in df.columns]]
+    logger.info(f"WB orders: прочитано {len(df)} строк из БД")
+    return df
+
+def read_sales() -> pd.DataFrame:
+    with engine.connect() as conn:
+        df = pd.read_sql(text("SELECT * FROM wb_sales"), conn)
+    df = df.rename(columns=SALES_COLUMN_MAP_INV)
+    df = df[[c for c in SALES_COLUMN_MAP_INV.values() if c in df.columns]]
+    logger.info(f"WB sales: прочитано {len(df)} строк из БД")
+    return df
 
 def _clean_value(col_name: str, value):
     if value is None or (isinstance(value, float) and np.isnan(value)) or pd.isna(value):
