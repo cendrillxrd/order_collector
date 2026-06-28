@@ -10,10 +10,10 @@ from yandex.yandex_main import yandex_main
 
 def main():
     base_info = base_main()
-    lamoda_info = lamoda_main(True)
-    ozon_info = ozon_main(True)
-    wb_info = wb_main(True)
-    yandex_info = yandex_main(True)
+    lamoda_info = lamoda_main(False)
+    ozon_info = ozon_main(False)
+    wb_info = wb_main(False)
+    yandex_info = yandex_main(False)
 
     result = pd.concat([ozon_info, wb_info, yandex_info, lamoda_info, base_info])
     excel_corrector = ExcelCorrector()

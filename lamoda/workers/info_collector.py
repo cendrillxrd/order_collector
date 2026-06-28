@@ -17,9 +17,9 @@ class InfoCollector:
         self.columns_main = ColumnsMainDTO()
 
     def collect_info(self) -> InfoDTO:
-        start_date = '2026-06-01'
-        end_date = '2026-06-07'
-        # start_date, end_date = get_dates_for_request_by_month()
+        # start_date = '2026-06-01'
+        # end_date = '2026-06-07'
+        start_date, end_date = get_dates_for_request_by_month()
 
         orders_month = self.api.get_orders_info_by_products(start_date=start_date, end_date=end_date)
 

@@ -14,8 +14,8 @@ class InfoCollector:
         self.wb = WBService()
 
     def collect_info(self) -> InfoDTO:
-        date_from, date_to = '2026-06-01','2026-06-07'
-        # date_from, date_to = get_two_weeks_range()
+        # date_from, date_to = '2026-06-01','2026-06-07'
+        date_from, date_to = get_two_weeks_range()
         orders = self.wb.get_orders(date_from=date_from, date_to=date_to)
         sales = self.wb.get_sales(date_from=date_from, date_to=date_to)
 

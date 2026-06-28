@@ -21,9 +21,9 @@ class InfoCollector:
         self.med = MedService()
 
     def collect_info(self) -> InfoYandexDTO:
-        date_from, date_to = '2026-06-01','2026-06-07'
-        # date_from = get_date_30_days_before_last_week_end()
-        # date_to = get_last_week_sunday()
+        # date_from, date_to = '2026-06-01','2026-06-07'
+        date_from = get_date_30_days_before_last_week_end()
+        date_to = get_last_week_sunday()
 
         returns = self.yandex.get_returns(date_from=date_from, date_to=date_to)
         orders = self.yandex.get_orders()
