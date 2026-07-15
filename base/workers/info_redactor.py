@@ -1,19 +1,32 @@
 import pandas as pd
 
+from base.dto.columns_main_dto import ColumnsBaseDTO
+from base.repositories.db_repository import read_base_orders
 from base.services import redaction
 
 
 class InfoRedactor:
-    @staticmethod
-    def redact_info(info_dict: dict[str, pd.DataFrame]) -> pd.DataFrame:
+    def __init__(self):
+        self.columns = ColumnsBaseDTO()
+
+    def redact_info(self) -> pd.DataFrame:
+        df = read_base_orders()
+
+        site_filters = {
+            'Проект THE HILLS': 'Сайт THE HILLS',
+            'Проект MARC CONY': 'Сайт MC',
+            'Проект VAN MICH': 'Сайт VAN MICH',
+            'МЁД': 'Сайт Мёд',
+            'Приложение': 'Приложение',
+            'Проект VipAvenue': 'VipAvenue',
+        }
+
         result = []
-        for key, df in info_dict.items():
-            orders = redaction.correction_dataframe_orders(df, key)
-            # returns = redaction.correction_dataframe_returns(df, key)
-            # agg_table = redaction.concat_main_info(orders, returns)
-            # result.append(agg_table)
+        for project_name, filter_value in site_filters.items():
+            subset = df[df[self.columns.canal] == filter_value].copy()
+            if subset.empty:
+                continue
+            orders = redaction.correction_dataframe_orders(subset, project_name)
             result.append(orders)
-        combined_df = pd.concat(result)
-        return combined_df
 
-
+        return pd.concat(result)
