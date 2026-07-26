@@ -5,7 +5,7 @@ from yandex.strategies.requests_strategies import RequestStrategy
 from yandex.strategies.convert_strategies import ConvertStrategy
 from yandex.strategies.merge_strategies import MergeStrategy
 from yandex.strategies.correct_strategies import CorrectStrategy
-from yandex.workers.client import YandexAPIClient, MedClient
+from yandex.workers.client import YandexAPIClient
 
 T = TypeVar('T')
 
@@ -31,13 +31,6 @@ class ContextYandexApi(BaseContext[RequestStrategy]):
     def get_info(self, client: YandexAPIClient | None = None, **kwargs):
         if client is None:
             client = YandexAPIClient()
-        return self._require_strategy().do_request(client, **kwargs)
-
-
-class ContextMedApi(BaseContext[RequestStrategy]):
-    def get_info(self, client: MedClient | None = None, **kwargs):
-        if client is None:
-            client = MedClient()
         return self._require_strategy().do_request(client, **kwargs)
 
 

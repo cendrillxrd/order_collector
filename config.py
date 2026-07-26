@@ -20,6 +20,9 @@ BASE_BRAND_NAMES = {
                     'MARC CONY': 'Marc Cony',
                     'PEPE JEANS LONDON': 'Pepe Jeans',
                     'VAN MICH': 'Van Mich',
-}
-
+                    'REDPIN': 'Red Pin'
+    }
 DATABASE_URL = os.getenv('DATABASE_URL')
+
+GENERAL_TABLE_FILE_NAME = 'Общая таблица заказов'
+GENERAL_TABLR_PATH = '//fserver/MP DATA/Общая таблица заказов/'

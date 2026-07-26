@@ -1,12 +1,11 @@
 import time
 from abc import ABC, abstractmethod
-from typing import Union, Dict
+from typing import Dict
 
 import requests
 
 from logger import setup_logger
-from yandex.yandex_config import API_KEY_YANDEX, RETRYABLE_STATUS_CODES, MAX_WAIT_SECONDS, YANDEX_BASE_URLS, \
-    MED_BASE_URLS
+from yandex.yandex_config import API_KEY_YANDEX, RETRYABLE_STATUS_CODES, MAX_WAIT_SECONDS, YANDEX_BASE_URLS
 from yandex.dto.request_yandex_config import RequestYandexConfig
 
 logger = setup_logger("my_app")
@@ -76,14 +75,3 @@ class YandexAPIClient(Client):
         wait_time = min(2 ** attempt, MAX_WAIT_SECONDS)
         logger.info(f'Повтор через {wait_time} сек. (причина: {reason})')
         time.sleep(wait_time)
-
-
-class MedClient(Client):
-    def __init__(self, base_urls: dict = MED_BASE_URLS):
-        self.base_urls = base_urls
-
-    def make_request(self, config: RequestYandexConfig) -> requests.Response:
-        url = self.base_urls[config.url_key]
-        response = requests.get(url)
-        response.raise_for_status()
-        return response

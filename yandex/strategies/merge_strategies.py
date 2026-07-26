@@ -16,11 +16,6 @@ class MergeStrategy(ABC):
     def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, **kwargs) -> pd.DataFrame:
         pass
 
-class MergeCollections(MergeStrategy):
-    def do_merge(self, df1: pd.DataFrame, df2: pd.DataFrame, **kwargs) -> pd.DataFrame:
-        merged_df = pd.concat([df1, df2], ignore_index=True)
-        return merged_df
-
 class MergeYandexCollections(MergeStrategy):
     def __init__(self, merge_on: str = orders_columns.offer_id):
         self.merge_on = merge_on

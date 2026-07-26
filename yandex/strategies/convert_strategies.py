@@ -1,10 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import asdict
-from io import BytesIO
-
 import pandas as pd
 
-from yandex.yandex_config import BASE_ORDERS_COLUMNS_NAME, BASE_COLLECTIONS_COLUMNS_NAME, BASE_RETURNS_COLUMNS_NAME
+from yandex.yandex_config import BASE_ORDERS_COLUMNS_NAME, BASE_RETURNS_COLUMNS_NAME
 from yandex.dto.orders_columns import OrdersColumnsDTO
 from yandex.dto.returned_columns_dto import ReturnedColumnsDTO
 from yandex.utils.corr_helpers import correct_columns_name
@@ -121,14 +119,3 @@ class ConvYandexReturns(ConvertStrategy):
         # Удалить, скажем, вторую (индекс 1 в списке dup_positions)
         result_df_without_unnecessary_columns = result_df_without_unnecessary_columns.iloc[:, [i for i in range(len(cols)) if i != dup_positions[1]]]
         return result_df_without_unnecessary_columns
-
-class ConvMEDCollections(ConvertStrategy):
-    def do_convert(self, data, **kwargs) -> pd.DataFrame:
-        """Преобразует данные о коллекциях на меде в DataFrame"""
-        med_collections_df = pd.read_excel(BytesIO(data.content))
-
-        med_collections_df = correct_columns_name(med_collections_df, BASE_COLLECTIONS_COLUMNS_NAME)
-
-        med_collections_df_without_unnecessary_columns = med_collections_df[[self.orders_columns.offer_id,
-                                                                             self.orders_columns.brand,]]
-        return med_collections_df_without_unnecessary_columns

@@ -3,7 +3,7 @@ import pandas as pd
 from yandex.contexts.context import ContextYandexMerge, ContextYandexCorrect
 from yandex.strategies.correct_strategies import CorrOrdersStrategy, CorrReturnsStrategy
 from yandex.strategies.merge_strategies import (
-    MergeCollections, MergeYandexCollections, MergeOrdersInfoStrategy, MergeReturnsInfoStrategy,
+    MergeYandexCollections, MergeOrdersInfoStrategy, MergeReturnsInfoStrategy,
     MergeOrdersWithReturnsStrategy)
 
 def with_strategies(merge_strategy=None, correct_strategy=None):
@@ -26,11 +26,6 @@ class RedactionService:
 
     @with_strategies(merge_strategy=MergeYandexCollections)
     def merge_with_med_collections(self, yandex_df: pd.DataFrame, med_df: pd.DataFrame) -> pd.DataFrame:
-        collections_merged = self.merger.merge_info(yandex_df, med_df)
-        return collections_merged
-
-    @with_strategies(merge_strategy=MergeCollections)
-    def merge_collections(self, yandex_df: pd.DataFrame, med_df: pd.DataFrame) -> pd.DataFrame:
         collections_merged = self.merger.merge_info(yandex_df, med_df)
         return collections_merged
 

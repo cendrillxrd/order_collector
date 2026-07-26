@@ -12,30 +12,13 @@ orders_columns = OrdersColumnsDTO()
 return_columns = ReturnedColumnsDTO()
 order_columns_main = OrdersMainInfoColumnsDTO()
 
-
-PURCHASE_LOGIN = os.getenv('PURCHASE_LOGIN')
-PURCHASE_PASSWORD = os.getenv('PURCHASE_PASSWORD')
-
 API_KEY_YANDEX = os.getenv('YANDEX_API_KEY')
 
 class YandexUrlKey(StrEnum):
     YANDEX = 'yandex'
 
-class MedUrlKey(StrEnum):
-    MED_COLLECTIONS_1 = 'med_collections_1'
-    MED_COLLECTIONS_2 = 'med_collections_2'
-    MED_COLLECTIONS_3 = 'med_collections_3'
-    MED_COLLECTIONS_4 = 'med_collections_4'
-
 YANDEX_BASE_URLS: dict[YandexUrlKey, str] = {
     YandexUrlKey.YANDEX: 'https://api.partner.market.yandex.ru'
-}
-
-MED_BASE_URLS: dict[MedUrlKey, str] = {
-    MedUrlKey.MED_COLLECTIONS_1: 'https://med-online.ru/upload/acrit.exportproplus/file.OZON.xlsx?1740656479',
-    MedUrlKey.MED_COLLECTIONS_2: 'https://med-online.ru/upload/acrit.exportproplus/file.OZONdop.xlsx?1744707024',
-    MedUrlKey.MED_COLLECTIONS_3: 'https://med-online.ru/upload/acrit.exportproplus/file.match-bikk.xlsx?1769676747',
-    MedUrlKey.MED_COLLECTIONS_4: 'https://med-online.ru/upload/acrit.exportproplus/file.Strell-Truss-Redp.xlsx?1772624157',
 }
 
 BASE_ORDERS_COLUMNS_NAME = {

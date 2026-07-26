@@ -33,10 +33,10 @@ class CorrOrdersStrategy(CorrectStrategy):
         orders[self.orders_main_info_columns.month] = orders[self.orders_columns.created_at].dt.month
         orders[self.orders_main_info_columns.week] = orders[self.orders_columns.created_at].dt.isocalendar().week
 
-        returned_statuses = ['Returned', 'Canceled', 'Not delivered', 'Not bought']
+        cancelled_statuses = ['Returned', 'Canceled', 'Not delivered', 'Not bought']
 
         orders['canceled_price'] = -orders[self.orders_columns.partner_agreed_price].where(
-            orders[self.orders_columns.status_product].isin(returned_statuses), 0)
+            orders[self.orders_columns.status_product].isin(cancelled_statuses), 0)
 
         # 3. Группируем сначала по году, месяцу, неделе, бренду
         grouped = orders.groupby([self.orders_main_info_columns.market, self.orders_main_info_columns.year,
@@ -45,7 +45,7 @@ class CorrOrdersStrategy(CorrectStrategy):
             sum_orders=(self.orders_columns.partner_agreed_price, 'sum'),
             sum_shipment=(self.orders_columns.partner_agreed_price, 'sum'),
             total_orders=(self.orders_columns.id, 'count'),
-            returned=(self.orders_columns.status_product, lambda x: x[x.isin(returned_statuses)].count()),
+            returned=(self.orders_columns.status_product, lambda x: x[x.isin(cancelled_statuses)].count()),
             total_main_orders=(self.orders_columns.id, 'nunique'),
             returned_sum=('canceled_price', 'sum'),
         ).reset_index()
@@ -68,7 +68,7 @@ class CorrReturnsStrategy(CorrectStrategy):
 
         returned_statuses = ['Refunded', 'Refund necessary', 'Ready to refund']
 
-        returns['canceled_price'] = -returns[self.orders_columns.partner_agreed_price].where(
+        returns['returned_price'] = -returns[self.orders_columns.partner_agreed_price].where(
             returns[self.orders_columns.status_product].isin(returned_statuses), 0)
 
         # 3. Группируем сначала по году, месяцу, неделе, бренду
@@ -76,7 +76,7 @@ class CorrReturnsStrategy(CorrectStrategy):
                                    self.returns_main_info_columns.month, self.returns_main_info_columns.week,
                                    self.returns_main_info_columns.brand]).agg(
             returned=(self.orders_columns.status_product, lambda x: x[x.isin(returned_statuses)].count()),
-            returned_sum=('canceled_price', 'sum'),
+            returned_sum=('returned_price', 'sum'),
         ).reset_index()
 
         grouped = correct_columns_name(grouped, BASE_MAIN_COLUMNS_NAME)

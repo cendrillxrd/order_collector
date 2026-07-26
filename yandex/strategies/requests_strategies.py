@@ -1,15 +1,12 @@
 import time
 from abc import ABC, abstractmethod
 
-import requests
-
 from logger import setup_logger
-from yandex.yandex_config import (LIMIT_CARDS_INFO, LIMIT_ORDERS, LIMIT_PUBLISHED_CARDS,
-                                  PURCHASE_LOGIN, PURCHASE_PASSWORD, TIME_SLEEP_CARDS_INFO,
-                                  TIME_SLEEP_ORDERS, TIME_SLEEP_PUBLISHED_CARDS, LIMIT_RETURNS, YandexUrlKey, MedUrlKey)
+from yandex.yandex_config import (LIMIT_ORDERS,
+                                  TIME_SLEEP_ORDERS,LIMIT_RETURNS, YandexUrlKey)
 from yandex.dto.request_yandex_config import RequestYandexConfig
 from yandex.utils.date_helper import get_date_30_days_before_last_week_end, get_current_week_monday
-from yandex.workers.client import Client, YandexAPIClient, MedClient
+from yandex.workers.client import Client, YandexAPIClient
 
 logger = setup_logger("my_app")
 
@@ -109,15 +106,3 @@ class ReqYandexOrders(RequestStrategy):
             result.extend(response['orders'])
             logger.info(f'Загружено заказов: {len(result)}')
         return result
-
-class ReqMEDCollections(RequestStrategy):
-    def __init__(self, url_key: MedUrlKey):
-        self.url_key = url_key
-
-    def do_request(self, client: MedClient, **kwargs) -> requests.Response:
-        config = RequestYandexConfig(
-            method='GET',
-            url_key=self.url_key,
-            endpoint='',
-        )
-        return client.make_request(config)

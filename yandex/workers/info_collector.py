@@ -1,16 +1,8 @@
-import pandas as pd
-
-from config import MAIN_DIR, REMOTE_PATH
 from logger import setup_logger
-from yandex.yandex_config import LOCAL_RETURNS_PATH, LOCAL_ORDERS_PATH
-from yandex.yandex_config import YANDEX_DISC_RETURNS_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NAME
 from yandex.dto.info_yandex_dto import InfoYandexDTO
-from yandex.services.med_service import MedService
-# from dto.main_columns_dto import YandexColumnsDTO
-# from dto.update_info_yandex_dto import InfoUpdateDTO
+from med.services.med_service import MedService
 from yandex.services.yandex_service import YandexService
-from yandex.utils.date_helper import get_date_30_days_before_last_week_end, get_current_week_monday, get_last_week_sunday
-from yandex_disk import download_file
+from yandex.utils.date_helper import get_date_30_days_before_last_week_end, get_last_week_sunday
 
 logger = setup_logger("my_app")
 
