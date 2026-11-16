@@ -5,7 +5,7 @@ from wb.wb_config import YANDEX_DISC_SALES_FILE_NAME, YANDEX_DISC_ORDERS_FILE_NA
 from wb.dto.info_dto import InfoDTO
 
 from wb.services.wb_service import WBService
-from wb.utils.date_helpers import get_two_weeks_range
+from wb.utils.date_helpers import get_weeks_range
 from yandex_disk import download_file
 
 
@@ -14,8 +14,8 @@ class InfoCollector:
         self.wb = WBService()
 
     def collect_info(self) -> InfoDTO:
-        # date_from, date_to = '2026-06-01','2026-06-07'
-        date_from, date_to = get_two_weeks_range()
+        # date_from, date_to = '2026-06-01','2026-06-30'
+        date_from, date_to = get_weeks_range(8)
         orders = self.wb.get_orders(date_from=date_from, date_to=date_to)
         sales = self.wb.get_sales(date_from=date_from, date_to=date_to)
 

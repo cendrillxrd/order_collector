@@ -16,5 +16,3 @@ def yandex_main(get_new_info:bool =False):
         info_redacted = info_redactor.redact_info(InfoYandexDTO(), get_new_info)
 
         return info_redacted
-
-yandex_main(True)
